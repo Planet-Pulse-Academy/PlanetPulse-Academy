@@ -1,4 +1,4 @@
-package com.ufovanguard.planetpulseacademy.ui.theme
+package com.ufovanguard.planetpulseacademy.foundation.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
