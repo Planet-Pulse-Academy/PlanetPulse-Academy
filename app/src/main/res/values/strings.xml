@@ -1,3 +1,10 @@
 <resources>
-    <string name="app_name">PlanetPulse Academy</string>
+    <string name="app_name" translatable="false">PlanetPulse Academy</string>
+
+    <string name="digit_missing_exception_msg">Password must contain at least 1 digit</string>
+    <string name="below_min_length_exception_msg">Password must be at least 8 characters long</string>
+    <string name="lowercase_missing_exception_msg">Password must contain at least 1 lowercase letter</string>
+    <string name="uppercase_missing_exception_msg">Password must contain at least 1 uppercase letter</string>
+    <string name="email_cant_be_empty">Email can\'t be empty</string>
+    <string name="password_cant_be_empty">Password can\'t be empty</string>
 </resources>

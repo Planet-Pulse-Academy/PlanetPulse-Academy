@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="digit_missing_exception_msg">Kata sandi harus berisi minimal 1 angka</string>
+    <string name="below_min_length_exception_msg">Kata sandi harus berisi minimal 8 karakter</string>
+    <string name="lowercase_missing_exception_msg">Kata sandi harus berisi minimal 1 huruf kecil</string>
+    <string name="uppercase_missing_exception_msg">Kata sandi harus berisi minimal 1 huruf besar</string>
+    <string name="email_cant_be_empty">Email tidak boleh kosong</string>
+    <string name="password_cant_be_empty">Kata sandi tidak boleh kosong</string>
+
+</resources>

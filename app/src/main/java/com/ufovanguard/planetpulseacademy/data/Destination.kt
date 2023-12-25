@@ -10,6 +10,7 @@ import androidx.navigation.NavDeepLink
  */
 
 object DestinationRoute {
+	const val LOGIN = "login"
 	const val HOME = "home"
 }
 
@@ -75,6 +76,10 @@ data class Destination(
 }
 
 object Destinations {
+
+	val login = Destination(
+		route = DestinationRoute.LOGIN
+	)
 
 	val home = Destination(
 		route = DestinationRoute.HOME
