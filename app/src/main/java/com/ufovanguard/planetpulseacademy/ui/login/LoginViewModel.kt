@@ -16,6 +16,14 @@ class LoginViewModel @Inject constructor(
 	savedStateHandle = savedStateHandle
 ) {
 
+	fun showPassword(show: Boolean) {
+		updateState {
+			copy(
+				showPassword = show
+			)
+		}
+	}
+
 	fun setUsername(username: String) {
 		updateState { copy(username = username) }
 	}

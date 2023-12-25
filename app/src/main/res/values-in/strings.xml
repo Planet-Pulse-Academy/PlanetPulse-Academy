@@ -14,5 +14,9 @@
     <string name="create_account">Buat akun</string>
     <string name="username">Nama pengguna</string>
     <string name="password">Kata sandi</string>
+    <string name="invalid_email">Email tidak valid</string>
+    <string name="email">Email</string>
+    <string name="already_have_an_account">Sudah punya akun</string>
+    <string name="register">Register</string>
 
 </resources>

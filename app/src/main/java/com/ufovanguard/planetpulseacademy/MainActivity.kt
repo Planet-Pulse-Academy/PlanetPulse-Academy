@@ -7,9 +7,12 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import com.ufovanguard.planetpulseacademy.foundation.theme.PlanetPulseAcademyTheme
@@ -40,9 +43,16 @@ class MainActivity: ComponentActivity() {
 				CompositionLocalProvider(
 					LocalContentColor provides MaterialTheme.colorScheme.onBackground
 				) {
-					PlanetPulseAcademy(
-						viewModel = viewModel
-					)
+					Surface(
+						color = MaterialTheme.colorScheme.background,
+						contentColor = MaterialTheme.colorScheme.onBackground,
+						modifier = Modifier
+							.fillMaxSize()
+					) {
+						PlanetPulseAcademy(
+							viewModel = viewModel
+						)
+					}
 				}
 			}
 		}

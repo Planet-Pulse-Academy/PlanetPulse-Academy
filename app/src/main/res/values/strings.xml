@@ -14,4 +14,8 @@
     <string name="create_account">Create account</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
+    <string name="invalid_email">Invalid email</string>
+    <string name="email">Email</string>
+    <string name="already_have_an_account">Already have an account</string>
+    <string name="register">Register</string>
 </resources>

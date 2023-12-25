@@ -18,6 +18,7 @@ import com.google.accompanist.navigation.material.ExperimentalMaterialNavigation
 import com.google.accompanist.navigation.material.ModalBottomSheetLayout
 import com.ufovanguard.planetpulseacademy.data.Destinations
 import com.ufovanguard.planetpulseacademy.ui.login.LoginScreen
+import com.ufovanguard.planetpulseacademy.ui.register.RegisterScreen
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalMaterialNavigationApi::class)
 @Composable
@@ -51,6 +52,15 @@ fun PlanetPulseAcademy(
 				startDestination = if (state.userCredential!!.isLoggedIn) Destinations.home.route
 				else Destinations.login.route,
 			) {
+				composable(Destinations.register.route) { backEntry ->
+					RegisterScreen(
+						viewModel = hiltViewModel(backEntry),
+						navigateTo = { dest ->
+							navController.navigate(dest.route)
+						}
+					)
+				}
+
 				composable(Destinations.login.route) { backEntry ->
 					LoginScreen(
 						viewModel = hiltViewModel(backEntry),

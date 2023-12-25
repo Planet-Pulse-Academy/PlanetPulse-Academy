@@ -1,7 +1,6 @@
-package com.ufovanguard.planetpulseacademy.ui.login
+package com.ufovanguard.planetpulseacademy.ui.register
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -40,9 +39,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewParameter
-import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
@@ -51,35 +47,11 @@ import com.ufovanguard.planetpulseacademy.R
 import com.ufovanguard.planetpulseacademy.data.Destination
 import com.ufovanguard.planetpulseacademy.data.Destinations
 import com.ufovanguard.planetpulseacademy.foundation.base.ui.BaseScreenWrapper
-import com.ufovanguard.planetpulseacademy.foundation.theme.PlanetPulseAcademyTheme
 import com.ufovanguard.planetpulseacademy.foundation.uicomponent.PPATextField
 
-class ThemeModePreviewParameterProvider: PreviewParameterProvider<Boolean> {
-	override val values: Sequence<Boolean>
-		get() = sequenceOf(true, false)
-}
-
-@Preview(device = "spec:width=392.7dp,height=850.9dp,dpi=440")
 @Composable
-private fun LoginScreenPreview(
-	@PreviewParameter(ThemeModePreviewParameterProvider::class)
-	isDarkTheme: Boolean
-) {
-	PlanetPulseAcademyTheme(
-		darkTheme = isDarkTheme
-	) {
-		LoginScreenContent(
-			state = LoginState(),
-			modifier = Modifier
-				.fillMaxSize()
-				.background(MaterialTheme.colorScheme.background)
-		)
-	}
-}
-
-@Composable
-fun LoginScreen(
-	viewModel: LoginViewModel,
+fun RegisterScreen(
+	viewModel: RegisterViewModel,
 	navigateTo: (Destination) -> Unit
 ) {
 
@@ -90,20 +62,21 @@ fun LoginScreen(
 		onEvent = { event ->
 			when (event) {
 				// when login is successful, navigate to home screen
-				is LoginUiEvent.LoginSuccess -> {
+				is RegisterUiEvent.RegisterSuccess -> {
 					navigateTo(Destinations.home)
 				}
 			}
 		}
 	) { scaffoldPadding ->
-		LoginScreenContent(
+		RegisterScreenContent(
 			state = state,
 			onPasswordVisibilityChanged = viewModel::showPassword,
+			onEmailChanged = viewModel::setEmail,
 			onUsernameChanged = viewModel::setUsername,
 			onPasswordChanged = viewModel::setPassword,
-			onLoginClicked = viewModel::login,
-			onRegisterClicked = {
-				navigateTo(Destinations.register)
+			onRegisterClicked = viewModel::register,
+			onLoginClicked = {
+				navigateTo(Destinations.login)
 			},
 			modifier = Modifier
 				.fillMaxSize()
@@ -115,10 +88,11 @@ fun LoginScreen(
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-private fun LoginScreenContent(
-	state: LoginState,
+private fun RegisterScreenContent(
+	state: RegisterState,
 	modifier: Modifier = Modifier,
 	onPasswordVisibilityChanged: (Boolean) -> Unit = {},
+	onEmailChanged: (String) -> Unit = {},
 	onUsernameChanged: (String) -> Unit = {},
 	onPasswordChanged: (String) -> Unit = {},
 	onRegisterClicked: () -> Unit = {},
@@ -129,14 +103,24 @@ private fun LoginScreenContent(
 	val focusManager = LocalFocusManager.current
 	val keyboardController = LocalSoftwareKeyboardController.current
 
+	val rememberedOnEmailChanged by rememberUpdatedState(onEmailChanged)
 	val rememberedOnUsernameChanged by rememberUpdatedState(onUsernameChanged)
 	val rememberedOnPasswordChanged by rememberUpdatedState(onPasswordChanged)
-	val rememberedOnLoginClicked by rememberUpdatedState(onLoginClicked)
+	val rememberedOnRegisterClicked by rememberUpdatedState(onRegisterClicked)
 
 	val (
+		emailFocusRequester,
 		usernameFocusRequester,
 		passwordFocusRequester,
 	) = FocusRequester.createRefs()
+
+	var emailTextFieldValue by remember {
+		mutableStateOf(
+			TextFieldValue(
+				text = state.email
+			)
+		)
+	}
 
 	var usernameTextFieldValue by remember {
 		mutableStateOf(
@@ -210,6 +194,30 @@ private fun LoginScreenContent(
 			)
 
 			PPATextField(
+				value = emailTextFieldValue,
+				singleLine = true,
+				keyboardOptions = KeyboardOptions(
+					imeAction = ImeAction.Next,
+					keyboardType = KeyboardType.Email
+				),
+				keyboardActions = KeyboardActions(
+					onNext = {
+						focusManager.moveFocus(FocusDirection.Next)
+					}
+				),
+				onValueChange = { newValue ->
+					emailTextFieldValue = newValue
+					rememberedOnEmailChanged(emailTextFieldValue.text)
+				},
+				placeholder = {
+					Text(stringResource(id = R.string.email))
+				},
+				modifier = Modifier
+					.fillMaxWidth()
+					.focusRequester(emailFocusRequester)
+			)
+
+			PPATextField(
 				value = passwordTextFieldValue,
 				singleLine = true,
 				visualTransformation = if (state.showPassword) VisualTransformation.None
@@ -257,35 +265,11 @@ private fun LoginScreenContent(
 
 			Button(
 				shape = MaterialTheme.shapes.medium,
-				onClick = rememberedOnLoginClicked,
+				onClick = rememberedOnRegisterClicked,
 				modifier = Modifier
 					.fillMaxWidth()
 			) {
-				Text(stringResource(id = R.string.login))
-			}
-
-			Row(
-				verticalAlignment = Alignment.CenterVertically,
-				horizontalArrangement = Arrangement.spacedBy(4.dp)
-			) {
-				Text(
-					text = stringResource(id = R.string.forgot_password) + "?",
-					style = MaterialTheme.typography.bodyMedium.copy(
-						color = MaterialTheme.colorScheme.onBackground
-					)
-				)
-
-				ClickableText(
-					text = buildAnnotatedString {
-						append(stringResource(id = R.string.reset))
-					},
-					style = MaterialTheme.typography.bodyMedium.copy(
-						color = MaterialTheme.colorScheme.primary
-					),
-					onClick = {
-						// TODO: Reset password
-					}
-				)
+				Text(stringResource(id = R.string.register))
 			}
 		}
 
@@ -296,7 +280,7 @@ private fun LoginScreenContent(
 				.layoutId("bottomContent")
 		) {
 			Text(
-				text = stringResource(id = R.string.dont_have_an_account) + "?",
+				text = stringResource(id = R.string.already_have_an_account) + "?",
 				style = MaterialTheme.typography.bodyMedium.copy(
 					color = MaterialTheme.colorScheme.onBackground
 				)
@@ -304,13 +288,13 @@ private fun LoginScreenContent(
 
 			ClickableText(
 				text = buildAnnotatedString {
-					append(stringResource(id = R.string.create_account))
+					append(stringResource(id = R.string.login))
 				},
 				style = MaterialTheme.typography.bodyMedium.copy(
 					color = MaterialTheme.colorScheme.primary
 				),
 				onClick = {
-					onRegisterClicked()
+					onLoginClicked()
 				}
 			)
 		}

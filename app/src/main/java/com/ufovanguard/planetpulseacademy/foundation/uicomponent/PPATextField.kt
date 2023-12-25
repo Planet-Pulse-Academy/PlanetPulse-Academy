@@ -90,7 +90,7 @@ fun PPATextField(
 
 	Box(
 		contentAlignment = Alignment.CenterStart,
-		modifier = modifier
+		modifier = Modifier
 			.heightIn(min = PPATextFieldDefaults.minHeight)
 			.clip(shape)
 			.background(containerColor)
@@ -100,13 +100,13 @@ fun PPATextField(
 			horizontalArrangement = Arrangement.spacedBy(8.dp),
 			modifier = Modifier
 				.padding(paddingValues)
+				.fillMaxWidth()
 		) {
 			leadingIcon?.invoke()
 
 			BasicTextField(
 				value = value,
 				onValueChange = onValueChange,
-				modifier = modifier,
 				enabled = enabled,
 				readOnly = readOnly,
 				textStyle = textStyle,
@@ -134,7 +134,9 @@ fun PPATextField(
 
 						innerTextField()
 					}
-				}
+				},
+				modifier = modifier
+					.weight(1f)
 			)
 
 			trailingIcon?.invoke()
@@ -144,7 +146,10 @@ fun PPATextField(
 
 object PPATextFieldDefaults {
 
-	val contentPadding = PaddingValues(12.dp)
+	val contentPadding = PaddingValues(
+		vertical = 4.dp,
+		horizontal = 8.dp
+	)
 
 	val minHeight = 56.dp
 
