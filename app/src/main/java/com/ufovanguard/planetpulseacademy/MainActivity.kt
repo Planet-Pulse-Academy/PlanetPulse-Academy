@@ -7,6 +7,9 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import com.ufovanguard.planetpulseacademy.foundation.theme.PlanetPulseAcademyTheme
@@ -19,26 +22,30 @@ class MainActivity: ComponentActivity() {
 
 	private val viewModel: PlanetPulseAcademyViewModel by viewModels()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        // Set system bar and navigation bar color to transparent
-        enableEdgeToEdge(
-            navigationBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT),
-            statusBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT)
-        )
+	override fun onCreate(savedInstanceState: Bundle?) {
+		// Set system bar and navigation bar color to transparent
+		enableEdgeToEdge(
+			navigationBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT),
+			statusBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT)
+		)
 
-        super.onCreate(savedInstanceState)
+		super.onCreate(savedInstanceState)
 
 		installSplashScreen().setKeepOnScreenCondition { viewModel.state.value.userCredential == null }
 
-        WindowCompat.setDecorFitsSystemWindows(window, false)
+		WindowCompat.setDecorFitsSystemWindows(window, false)
 
-        setContent {
-            PlanetPulseAcademyTheme {
-				PlanetPulseAcademy(
-					viewModel = viewModel
-				)
-            }
-        }
-    }
+		setContent {
+			PlanetPulseAcademyTheme {
+				CompositionLocalProvider(
+					LocalContentColor provides MaterialTheme.colorScheme.onBackground
+				) {
+					PlanetPulseAcademy(
+						viewModel = viewModel
+					)
+				}
+			}
+		}
+	}
 
 }
