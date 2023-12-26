@@ -61,9 +61,9 @@ fun RegisterScreen(
 		viewModel = viewModel,
 		onEvent = { event ->
 			when (event) {
-				// when login is successful, navigate to home screen
+				// when register is successful, navigate to login screen
 				is RegisterUiEvent.RegisterSuccess -> {
-					navigateTo(Destinations.home)
+					navigateTo(Destinations.Auth.login)
 				}
 			}
 		}
@@ -76,7 +76,7 @@ fun RegisterScreen(
 			onPasswordChanged = viewModel::setPassword,
 			onRegisterClicked = viewModel::register,
 			onLoginClicked = {
-				navigateTo(Destinations.login)
+				navigateTo(Destinations.Auth.login)
 			},
 			modifier = Modifier
 				.fillMaxSize()

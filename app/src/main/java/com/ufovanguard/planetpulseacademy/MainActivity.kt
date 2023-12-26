@@ -34,7 +34,10 @@ class MainActivity: ComponentActivity() {
 
 		super.onCreate(savedInstanceState)
 
-		installSplashScreen().setKeepOnScreenCondition { viewModel.state.value.userCredential == null }
+		installSplashScreen().setKeepOnScreenCondition {
+			viewModel.state.value.userCredential == null ||
+			viewModel.state.value.userPreference == null
+		}
 
 		WindowCompat.setDecorFitsSystemWindows(window, false)
 

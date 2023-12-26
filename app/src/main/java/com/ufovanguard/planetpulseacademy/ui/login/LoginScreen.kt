@@ -91,7 +91,7 @@ fun LoginScreen(
 			when (event) {
 				// when login is successful, navigate to home screen
 				is LoginUiEvent.LoginSuccess -> {
-					navigateTo(Destinations.home)
+					navigateTo(Destinations.Main.home)
 				}
 			}
 		}
@@ -103,7 +103,7 @@ fun LoginScreen(
 			onPasswordChanged = viewModel::setPassword,
 			onLoginClicked = viewModel::login,
 			onRegisterClicked = {
-				navigateTo(Destinations.register)
+				navigateTo(Destinations.Auth.register)
 			},
 			modifier = Modifier
 				.fillMaxSize()

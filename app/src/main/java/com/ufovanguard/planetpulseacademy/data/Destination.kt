@@ -10,6 +10,7 @@ import androidx.navigation.NavDeepLink
  */
 
 object DestinationRoute {
+	const val ONBOARDING = "onboarding"
 	const val REGISTER = "register"
 	const val LOGIN = "login"
 	const val HOME = "home"
@@ -32,6 +33,7 @@ data class Destination(
 	/**
 	 * if you want to navigate to another screen with arguments, use this
 	 * @param value {key: value}
+	 * @author kafri8889
 	 */
 	fun createRoute(vararg value: Pair<Any, Any?>): Destination {
 		var mRoute = route
@@ -60,6 +62,8 @@ data class Destination(
 		 *     ARG_2
 		 * )
 		 * ```
+		 *
+		 * @author kafri8889
 		 */
 		fun buildRoute(
 			route: String,
@@ -78,16 +82,47 @@ data class Destination(
 
 object Destinations {
 
-	val register = Destination(
-		route = DestinationRoute.REGISTER
-	)
+	/**
+	 * Onboarding graph
+	 */
+	object Onboarding {
+		val route = Destination(
+			route = "root_onboarding"
+		)
 
-	val login = Destination(
-		route = DestinationRoute.LOGIN
-	)
+		val onboarding = Destination(
+			route = DestinationRoute.ONBOARDING
+		)
+	}
 
-	val home = Destination(
-		route = DestinationRoute.HOME
-	)
+	/**
+	 * Auth graph
+	 */
+	object Auth {
+		val route = Destination(
+			route = "root_auth"
+		)
+
+		val register = Destination(
+			route = DestinationRoute.REGISTER
+		)
+
+		val login = Destination(
+			route = DestinationRoute.LOGIN
+		)
+	}
+
+	/**
+	 * Main graph when user is logged in
+	 */
+	object Main {
+		val route = Destination(
+			route = "root_main"
+		)
+
+		val home = Destination(
+			route = DestinationRoute.HOME
+		)
+	}
 
 }
