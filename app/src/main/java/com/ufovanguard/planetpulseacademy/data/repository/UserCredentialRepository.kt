@@ -13,4 +13,6 @@ interface UserCredentialRepository {
 
 	suspend fun setEmail(email: String)
 
+	suspend fun setToken(token: String)
+
 }

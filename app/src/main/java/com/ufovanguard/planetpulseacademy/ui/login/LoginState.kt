@@ -11,5 +11,6 @@ data class LoginState(
 	val password: String = "",
 	val usernameErrMsg: String? = null,
 	val passwordErrMsg: String? = null,
-	val showPassword: Boolean = false
+	val showPassword: Boolean = false,
+	val isLoading: Boolean = false,
 ): Parcelable

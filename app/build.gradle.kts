@@ -186,6 +186,11 @@ dependencies {
     implementation("androidx.hilt:hilt-work:1.1.0")
     implementation("androidx.work:work-runtime-ktx:2.9.0")
 
+	// Networking
+	implementation("com.squareup.retrofit2:retrofit:2.9.0")
+	implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+	implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
+
     // Media
     implementation("androidx.media3:media3-exoplayer:1.2.0")
 
@@ -193,6 +198,7 @@ dependencies {
     implementation("com.google.accompanist:accompanist-navigation-material:$accompanist_version")
 
     // Other
+	implementation("com.auth0.android:jwtdecode:2.0.2")
     implementation("com.google.code.gson:gson:2.10")
     implementation("com.jakewharton.timber:timber:5.0.1")
     implementation("com.squareup.wire:wire-runtime:4.4.3")

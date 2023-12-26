@@ -3,20 +3,30 @@ package com.ufovanguard.planetpulseacademy.ui.login
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -51,6 +61,7 @@ import com.ufovanguard.planetpulseacademy.R
 import com.ufovanguard.planetpulseacademy.data.Destination
 import com.ufovanguard.planetpulseacademy.data.Destinations
 import com.ufovanguard.planetpulseacademy.foundation.base.ui.BaseScreenWrapper
+import com.ufovanguard.planetpulseacademy.foundation.common.ValidatorResult.Success.parse
 import com.ufovanguard.planetpulseacademy.foundation.theme.PlanetPulseAcademyTheme
 import com.ufovanguard.planetpulseacademy.foundation.uicomponent.PPATextField
 
@@ -113,7 +124,9 @@ fun LoginScreen(
 
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class,
+	ExperimentalLayoutApi::class
+)
 @Composable
 private fun LoginScreenContent(
 	state: LoginState,
@@ -175,6 +188,27 @@ private fun LoginScreenContent(
 		}
 	}
 
+	val isImeVisible = WindowInsets.isImeVisible
+
+	LaunchedEffect(isImeVisible) {
+		if (!isImeVisible) focusManager.clearFocus()
+	}
+
+	if (state.isLoading) {
+		BasicAlertDialog(
+			onDismissRequest = {}
+		) {
+			Box(
+				contentAlignment = Alignment.Center
+			) {
+				CircularProgressIndicator(
+					modifier = Modifier
+						.size(32.dp)
+				)
+			}
+		}
+	}
+
 	ConstraintLayout(
 		constraintSet = constraintSet,
 		modifier = modifier
@@ -188,6 +222,7 @@ private fun LoginScreenContent(
 			PPATextField(
 				value = usernameTextFieldValue,
 				singleLine = true,
+				isError = state.usernameErrMsg != null,
 				keyboardOptions = KeyboardOptions(
 					imeAction = ImeAction.Next,
 					keyboardType = KeyboardType.Text
@@ -204,6 +239,16 @@ private fun LoginScreenContent(
 				placeholder = {
 					Text(stringResource(id = R.string.username))
 				},
+				supportingText = if (state.usernameErrMsg != null) {
+					{
+						Text(
+							text = state.usernameErrMsg.parse(context),
+							style = LocalTextStyle.current.copy(
+								color = MaterialTheme.colorScheme.onBackground
+							)
+						)
+					}
+				} else null,
 				modifier = Modifier
 					.fillMaxWidth()
 					.focusRequester(usernameFocusRequester)
@@ -212,6 +257,7 @@ private fun LoginScreenContent(
 			PPATextField(
 				value = passwordTextFieldValue,
 				singleLine = true,
+				isError = state.passwordErrMsg != null,
 				visualTransformation = if (state.showPassword) VisualTransformation.None
 				else PasswordVisualTransformation(),
 				keyboardOptions = KeyboardOptions(
@@ -230,6 +276,16 @@ private fun LoginScreenContent(
 				placeholder = {
 					Text(stringResource(id = R.string.password))
 				},
+				supportingText = if (state.passwordErrMsg != null) {
+					{
+						Text(
+							text = state.passwordErrMsg.parse(context),
+							style = LocalTextStyle.current.copy(
+								color = MaterialTheme.colorScheme.onBackground
+							)
+						)
+					}
+				} else null,
 				trailingIcon = {
 					IconButton(
 						onClick = {

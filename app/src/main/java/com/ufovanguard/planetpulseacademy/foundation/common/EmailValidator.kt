@@ -5,6 +5,8 @@ import com.ufovanguard.planetpulseacademy.R
 class EmailValidator: Validator<String>() {
 
 	override fun validate(input: String): ValidatorResult {
+		if (input.isBlank()) return ValidatorResult.Failure(ValidatorResult.asStringResource(R.string.email_cannot_be_empty))
+
 		// ^: matches beginning of the string
 		// []: matches any character in this set
 		// \w: matches any word (alphanumeric and underscore)

@@ -2,9 +2,11 @@ package com.ufovanguard.planetpulseacademy.foundation.uicomponent
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -43,6 +45,7 @@ private fun PPATextFieldPreview() {
 	PlanetPulseAcademyTheme {
 		PPATextField(
 			value = TextFieldValue(""),
+			isError = true,
 			onValueChange = {},
 			placeholder = {
 				Text("Placeholder")
@@ -54,6 +57,9 @@ private fun PPATextFieldPreview() {
 					modifier = Modifier
 						.size(24.dp)
 				)
+			},
+			supportingText = {
+				Text("Name cannot be empty")
 			},
 			modifier = Modifier
 				.fillMaxWidth()
@@ -68,6 +74,7 @@ fun PPATextField(
 	modifier: Modifier = Modifier,
 	paddingValues: PaddingValues = PPATextFieldDefaults.contentPadding,
 	shape: Shape = MaterialTheme.shapes.medium,
+	isError: Boolean = false,
 	enabled: Boolean = true,
 	readOnly: Boolean = false,
 	textStyle: TextStyle = TextStyle.Default.copy(
@@ -83,63 +90,78 @@ fun PPATextField(
 	interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
 	cursorBrush: Brush = SolidColor(MaterialTheme.colorScheme.onSurfaceVariant),
 	containerColor: Color = MaterialTheme.colorScheme.surfaceContainerHigh,
+	supportingText: @Composable (() -> Unit)? = null,
 	placeholder: @Composable (() -> Unit)? = null,
 	trailingIcon: @Composable (() -> Unit)? = null,
 	leadingIcon: @Composable (() -> Unit)? = null,
 ) {
 
-	Box(
-		contentAlignment = Alignment.CenterStart,
-		modifier = Modifier
-			.heightIn(min = PPATextFieldDefaults.minHeight)
-			.clip(shape)
-			.background(containerColor)
-	) {
-		Row(
-			verticalAlignment = Alignment.CenterVertically,
-			horizontalArrangement = Arrangement.spacedBy(8.dp),
+	Column {
+		Box(
+			contentAlignment = Alignment.CenterStart,
 			modifier = Modifier
-				.padding(paddingValues)
-				.fillMaxWidth()
+				.heightIn(min = PPATextFieldDefaults.minHeight)
+				.clip(shape)
+				.background(containerColor)
+				.border(
+					width = 1.dp,
+					color = if (isError) MaterialTheme.colorScheme.error else Color.Transparent,
+					shape = shape
+				)
 		) {
-			leadingIcon?.invoke()
+			Row(
+				verticalAlignment = Alignment.CenterVertically,
+				horizontalArrangement = Arrangement.spacedBy(8.dp),
+				modifier = Modifier
+					.padding(paddingValues)
+					.fillMaxWidth()
+			) {
+				leadingIcon?.invoke()
 
-			BasicTextField(
-				value = value,
-				onValueChange = onValueChange,
-				enabled = enabled,
-				readOnly = readOnly,
-				textStyle = textStyle,
-				keyboardOptions = keyboardOptions,
-				keyboardActions = keyboardActions,
-				singleLine = singleLine,
-				maxLines = maxLines,
-				minLines = minLines,
-				visualTransformation = visualTransformation,
-				onTextLayout = onTextLayout,
-				interactionSource = interactionSource,
-				cursorBrush = cursorBrush,
-				decorationBox = { innerTextField ->
-					Box(
-						contentAlignment = Alignment.CenterStart
-					) {
-						if (placeholder != null && value.text.isEmpty()) {
-							ProvideTextStyle(
-								content = placeholder,
-								value = textStyle.copy(
-									color = textStyle.color.copy(alpha = 0.48f)
+				BasicTextField(
+					value = value,
+					onValueChange = onValueChange,
+					enabled = enabled,
+					readOnly = readOnly,
+					textStyle = textStyle,
+					keyboardOptions = keyboardOptions,
+					keyboardActions = keyboardActions,
+					singleLine = singleLine,
+					maxLines = maxLines,
+					minLines = minLines,
+					visualTransformation = visualTransformation,
+					onTextLayout = onTextLayout,
+					interactionSource = interactionSource,
+					cursorBrush = cursorBrush,
+					decorationBox = { innerTextField ->
+						Box(
+							contentAlignment = Alignment.CenterStart
+						) {
+							if (placeholder != null && value.text.isEmpty()) {
+								ProvideTextStyle(
+									content = placeholder,
+									value = textStyle.copy(
+										color = textStyle.color.copy(alpha = 0.48f)
+									)
 								)
-							)
+							}
+
+							innerTextField()
 						}
+					},
+					modifier = modifier
+						.weight(1f)
+				)
 
-						innerTextField()
-					}
-				},
-				modifier = modifier
-					.weight(1f)
+				trailingIcon?.invoke()
+			}
+		}
+
+		if (supportingText != null && isError) {
+			ProvideTextStyle(
+				content = supportingText,
+				value = MaterialTheme.typography.labelMedium
 			)
-
-			trailingIcon?.invoke()
 		}
 	}
 }
@@ -148,7 +170,7 @@ object PPATextFieldDefaults {
 
 	val contentPadding = PaddingValues(
 		vertical = 4.dp,
-		horizontal = 8.dp
+		horizontal = 12.dp
 	)
 
 	val minHeight = 56.dp

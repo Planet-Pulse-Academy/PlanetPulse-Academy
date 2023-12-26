@@ -5,8 +5,6 @@
     <string name="below_min_length_exception_msg">Password must be at least 8 characters long</string>
     <string name="lowercase_missing_exception_msg">Password must contain at least 1 lowercase letter</string>
     <string name="uppercase_missing_exception_msg">Password must contain at least 1 uppercase letter</string>
-    <string name="email_cant_be_empty">Email can\'t be empty</string>
-    <string name="password_cant_be_empty">Password can\'t be empty</string>
     <string name="login">Login</string>
     <string name="forgot_password">Forgot password</string>
     <string name="reset">Reset</string>
@@ -18,4 +16,10 @@
     <string name="email">Email</string>
     <string name="already_have_an_account">Already have an account</string>
     <string name="register">Register</string>
+    <string name="email_verification_has_been_sent">Email verification has been sent</string>
+    <string name="name">Name</string>
+    <string name="name_cannot_be_empty">Name cannot be empty</string>
+    <string name="username_cannot_be_empty">Username cannot be empty</string>
+    <string name="email_cannot_be_empty">Email cannot be empty</string>
+    <string name="password_cannot_be_empty">Password cannot be empty</string>
 </resources>

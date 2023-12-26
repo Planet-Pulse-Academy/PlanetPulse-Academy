@@ -8,9 +8,10 @@ data class UserCredential(
 	val id: String,
 	val name: String,
 	val email: String,
+	val token: String
 ): Parcelable {
 
 	val isLoggedIn: Boolean
-		get() = id.isNotBlank() and name.isNotBlank() and email.isNotBlank()
+		get() = id.isNotBlank() and name.isNotBlank() and email.isNotBlank() and token.isNotBlank()
 
 }

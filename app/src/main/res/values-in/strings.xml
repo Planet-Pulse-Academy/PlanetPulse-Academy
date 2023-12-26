@@ -5,8 +5,6 @@
     <string name="below_min_length_exception_msg">Kata sandi harus berisi minimal 8 karakter</string>
     <string name="lowercase_missing_exception_msg">Kata sandi harus berisi minimal 1 huruf kecil</string>
     <string name="uppercase_missing_exception_msg">Kata sandi harus berisi minimal 1 huruf besar</string>
-    <string name="email_cant_be_empty">Email tidak boleh kosong</string>
-    <string name="password_cant_be_empty">Kata sandi tidak boleh kosong</string>
     <string name="login">Masuk</string>
     <string name="forgot_password">Lupa kata sandi</string>
     <string name="reset">Reset</string>
@@ -18,5 +16,11 @@
     <string name="email">Email</string>
     <string name="already_have_an_account">Sudah punya akun</string>
     <string name="register">Register</string>
+    <string name="email_verification_has_been_sent">Email verifikasi telah terkirim</string>
+    <string name="name">Nama</string>
+    <string name="name_cannot_be_empty">Nama tidak boleh kosong</string>
+    <string name="username_cannot_be_empty">Nama pengguna tidak boleh kosong</string>
+    <string name="email_cannot_be_empty">Email tidak boleh kosong</string>
+    <string name="password_cannot_be_empty">Kata sandi tidak boleh kosong</string>
 
 </resources>

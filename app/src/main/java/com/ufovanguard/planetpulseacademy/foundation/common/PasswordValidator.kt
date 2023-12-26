@@ -9,7 +9,7 @@ class PasswordValidator: Validator<String>() {
 
 	override fun validate(input: String): ValidatorResult {
 		if (input.isBlank()) {
-			return ValidatorResult.Failure(ValidatorResult.asStringResource(R.string.password_cant_be_empty))
+			return ValidatorResult.Failure(ValidatorResult.asStringResource(R.string.password_cannot_be_empty))
 		}
 
 		if (input.length < 8) {

@@ -35,6 +35,12 @@ class UserCredentialRepositoryImpl @Inject constructor(
 		}
 	}
 
+	override suspend fun setToken(token: String) {
+		userCredentialDatastore.updateData { protoUserCredential ->
+			protoUserCredential.copy(token = token)
+		}
+	}
+
 	companion object {
 		val corruptionHandler = ReplaceFileCorruptionHandler(
 			produceNewData = { ProtoUserCredential() }

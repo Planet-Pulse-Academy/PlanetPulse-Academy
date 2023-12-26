@@ -2,20 +2,30 @@ package com.ufovanguard.planetpulseacademy.ui.register
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,6 +57,7 @@ import com.ufovanguard.planetpulseacademy.R
 import com.ufovanguard.planetpulseacademy.data.Destination
 import com.ufovanguard.planetpulseacademy.data.Destinations
 import com.ufovanguard.planetpulseacademy.foundation.base.ui.BaseScreenWrapper
+import com.ufovanguard.planetpulseacademy.foundation.common.ValidatorResult.Success.parse
 import com.ufovanguard.planetpulseacademy.foundation.uicomponent.PPATextField
 
 @Composable
@@ -71,6 +82,7 @@ fun RegisterScreen(
 		RegisterScreenContent(
 			state = state,
 			onPasswordVisibilityChanged = viewModel::showPassword,
+			onNameChanged = viewModel::setName,
 			onEmailChanged = viewModel::setEmail,
 			onUsernameChanged = viewModel::setUsername,
 			onPasswordChanged = viewModel::setPassword,
@@ -86,12 +98,15 @@ fun RegisterScreen(
 
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalLayoutApi::class,
+	ExperimentalMaterial3Api::class
+)
 @Composable
 private fun RegisterScreenContent(
 	state: RegisterState,
 	modifier: Modifier = Modifier,
 	onPasswordVisibilityChanged: (Boolean) -> Unit = {},
+	onNameChanged: (String) -> Unit = {},
 	onEmailChanged: (String) -> Unit = {},
 	onUsernameChanged: (String) -> Unit = {},
 	onPasswordChanged: (String) -> Unit = {},
@@ -103,16 +118,26 @@ private fun RegisterScreenContent(
 	val focusManager = LocalFocusManager.current
 	val keyboardController = LocalSoftwareKeyboardController.current
 
+	val rememberedOnNameChanged by rememberUpdatedState(onNameChanged)
 	val rememberedOnEmailChanged by rememberUpdatedState(onEmailChanged)
 	val rememberedOnUsernameChanged by rememberUpdatedState(onUsernameChanged)
 	val rememberedOnPasswordChanged by rememberUpdatedState(onPasswordChanged)
 	val rememberedOnRegisterClicked by rememberUpdatedState(onRegisterClicked)
 
 	val (
+		nameFocusRequester,
 		emailFocusRequester,
 		usernameFocusRequester,
 		passwordFocusRequester,
 	) = FocusRequester.createRefs()
+
+	var nameTextFieldValue by remember {
+		mutableStateOf(
+			TextFieldValue(
+				text = state.name
+			)
+		)
+	}
 
 	var emailTextFieldValue by remember {
 		mutableStateOf(
@@ -159,6 +184,27 @@ private fun RegisterScreenContent(
 		}
 	}
 
+	val isImeVisible = WindowInsets.isImeVisible
+
+	LaunchedEffect(isImeVisible) {
+		if (!isImeVisible) focusManager.clearFocus()
+	}
+
+	if (state.isLoading) {
+		BasicAlertDialog(
+			onDismissRequest = {}
+		) {
+			Box(
+				contentAlignment = Alignment.Center
+			) {
+				CircularProgressIndicator(
+					modifier = Modifier
+						.size(32.dp)
+				)
+			}
+		}
+	}
+
 	ConstraintLayout(
 		constraintSet = constraintSet,
 		modifier = modifier
@@ -170,8 +216,44 @@ private fun RegisterScreenContent(
 				.layoutId("middleContent")
 		) {
 			PPATextField(
+				value = nameTextFieldValue,
+				singleLine = true,
+				isError = state.nameErrMsg != null,
+				keyboardOptions = KeyboardOptions(
+					imeAction = ImeAction.Next,
+					keyboardType = KeyboardType.Text
+				),
+				keyboardActions = KeyboardActions(
+					onNext = {
+						focusManager.moveFocus(FocusDirection.Next)
+					}
+				),
+				onValueChange = { newValue ->
+					nameTextFieldValue = newValue
+					rememberedOnNameChanged(nameTextFieldValue.text)
+				},
+				placeholder = {
+					Text(stringResource(id = R.string.name))
+				},
+				supportingText = if (state.nameErrMsg != null) {
+					{
+						Text(
+							text = state.nameErrMsg.parse(context),
+							style = LocalTextStyle.current.copy(
+								color = MaterialTheme.colorScheme.onBackground
+							)
+						)
+					}
+				} else null,
+				modifier = Modifier
+					.fillMaxWidth()
+					.focusRequester(nameFocusRequester)
+			)
+
+			PPATextField(
 				value = usernameTextFieldValue,
 				singleLine = true,
+				isError = state.usernameErrMsg != null,
 				keyboardOptions = KeyboardOptions(
 					imeAction = ImeAction.Next,
 					keyboardType = KeyboardType.Text
@@ -188,6 +270,16 @@ private fun RegisterScreenContent(
 				placeholder = {
 					Text(stringResource(id = R.string.username))
 				},
+				supportingText = if (state.usernameErrMsg != null) {
+					{
+						Text(
+							text = state.usernameErrMsg.parse(context),
+							style = LocalTextStyle.current.copy(
+								color = MaterialTheme.colorScheme.onBackground
+							)
+						)
+					}
+				} else null,
 				modifier = Modifier
 					.fillMaxWidth()
 					.focusRequester(usernameFocusRequester)
@@ -196,6 +288,7 @@ private fun RegisterScreenContent(
 			PPATextField(
 				value = emailTextFieldValue,
 				singleLine = true,
+				isError = state.emailErrMsg != null,
 				keyboardOptions = KeyboardOptions(
 					imeAction = ImeAction.Next,
 					keyboardType = KeyboardType.Email
@@ -212,6 +305,16 @@ private fun RegisterScreenContent(
 				placeholder = {
 					Text(stringResource(id = R.string.email))
 				},
+				supportingText = if (state.emailErrMsg != null) {
+					{
+						Text(
+							text = state.emailErrMsg.parse(context),
+							style = LocalTextStyle.current.copy(
+								color = MaterialTheme.colorScheme.onBackground
+							)
+						)
+					}
+				} else null,
 				modifier = Modifier
 					.fillMaxWidth()
 					.focusRequester(emailFocusRequester)
@@ -220,6 +323,7 @@ private fun RegisterScreenContent(
 			PPATextField(
 				value = passwordTextFieldValue,
 				singleLine = true,
+				isError = state.passwordErrMsg != null,
 				visualTransformation = if (state.showPassword) VisualTransformation.None
 				else PasswordVisualTransformation(),
 				keyboardOptions = KeyboardOptions(
@@ -238,6 +342,16 @@ private fun RegisterScreenContent(
 				placeholder = {
 					Text(stringResource(id = R.string.password))
 				},
+				supportingText = if (state.passwordErrMsg != null) {
+					{
+						Text(
+							text = state.passwordErrMsg.parse(context),
+							style = LocalTextStyle.current.copy(
+								color = MaterialTheme.colorScheme.onBackground
+							)
+						)
+					}
+				} else null,
 				trailingIcon = {
 					IconButton(
 						onClick = {

@@ -18,6 +18,7 @@ import com.google.accompanist.navigation.material.BottomSheetNavigator
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.google.accompanist.navigation.material.ModalBottomSheetLayout
 import com.ufovanguard.planetpulseacademy.data.Destinations
+import com.ufovanguard.planetpulseacademy.ui.home.HomeScreen
 import com.ufovanguard.planetpulseacademy.ui.login.LoginScreen
 import com.ufovanguard.planetpulseacademy.ui.onboarding.OnboardingScreen
 import com.ufovanguard.planetpulseacademy.ui.register.RegisterScreen
@@ -99,7 +100,12 @@ fun PlanetPulseAcademy(
 					route = Destinations.Main.route.route
 				) {
 					composable(Destinations.Main.home.route) { backEntry ->
-
+						HomeScreen(
+							viewModel = hiltViewModel(backEntry),
+							navigateTo = { dest ->
+								navController.navigate(dest.route)
+							}
+						)
 					}
 				}
 			}

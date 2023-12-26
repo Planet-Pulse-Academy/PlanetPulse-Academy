@@ -12,7 +12,7 @@ class PasswordValidatorTest {
 	fun `empty test` () {
 		val result = passwordValidator.validate("")
 
-		assert(result.isFailure && result.errMsg!! == ValidatorResult.asStringResource(R.string.password_cant_be_empty))
+		assert(result.isFailure && result.errMsg!! == ValidatorResult.asStringResource(R.string.password_cannot_be_empty))
 	}
 
 	@Test
