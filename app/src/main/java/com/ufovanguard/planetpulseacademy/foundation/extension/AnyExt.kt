@@ -1,4 +1,4 @@
-package com.anafthdev.comdeo.foundation.extension
+package com.ufovanguard.planetpulseacademy.foundation.extension
 
 import com.google.gson.Gson
 

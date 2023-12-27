@@ -5,9 +5,9 @@ import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequest
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.workDataOf
-import com.anafthdev.comdeo.foundation.extension.toJson
 import com.ufovanguard.planetpulseacademy.data.model.remote.body.LoginBody
 import com.ufovanguard.planetpulseacademy.data.model.remote.body.RegisterBody
+import com.ufovanguard.planetpulseacademy.foundation.extension.toJson
 
 object Workers {
 
