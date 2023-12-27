@@ -3,6 +3,7 @@
     <color name="seed">#B25E54</color>
 
     <color name="ic_launcher_background">#28d16e</color>
+    <color name="ic_splash_background">#1CD06F</color>
     <color name="ic_app_background">#28CF6D</color>
 
     <color name="md_theme_light_primary">#9C4238</color>

@@ -1,23 +1,30 @@
 package com.ufovanguard.planetpulseacademy.ui.login
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -35,9 +42,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
@@ -62,6 +73,7 @@ import com.ufovanguard.planetpulseacademy.data.Destination
 import com.ufovanguard.planetpulseacademy.data.Destinations
 import com.ufovanguard.planetpulseacademy.foundation.base.ui.BaseScreenWrapper
 import com.ufovanguard.planetpulseacademy.foundation.common.ValidatorResult.Success.parse
+import com.ufovanguard.planetpulseacademy.foundation.theme.PPATheme
 import com.ufovanguard.planetpulseacademy.foundation.theme.PlanetPulseAcademyTheme
 import com.ufovanguard.planetpulseacademy.foundation.uicomponent.PPATextField
 
@@ -70,7 +82,7 @@ class ThemeModePreviewParameterProvider: PreviewParameterProvider<Boolean> {
 		get() = sequenceOf(true, false)
 }
 
-@Preview(device = "spec:width=392.7dp,height=850.9dp,dpi=440")
+@Preview(device = "spec:width=411.4dp,height=731.4dp")
 @Composable
 private fun LoginScreenPreview(
 	@PreviewParameter(ThemeModePreviewParameterProvider::class)
@@ -83,7 +95,7 @@ private fun LoginScreenPreview(
 			state = LoginState(),
 			modifier = Modifier
 				.fillMaxSize()
-				.background(MaterialTheme.colorScheme.background)
+				.background(PPATheme.colorScheme.background)
 		)
 	}
 }
@@ -118,6 +130,7 @@ fun LoginScreen(
 			},
 			modifier = Modifier
 				.fillMaxSize()
+				.background(PPATheme.colorScheme.background)
 				.padding(scaffoldPadding)
 		)
 	}
@@ -137,51 +150,43 @@ private fun LoginScreenContent(
 	onRegisterClicked: () -> Unit = {},
 	onLoginClicked: () -> Unit = {},
 ) {
-
-	val context = LocalContext.current
 	val focusManager = LocalFocusManager.current
-	val keyboardController = LocalSoftwareKeyboardController.current
-
-	val rememberedOnUsernameChanged by rememberUpdatedState(onUsernameChanged)
-	val rememberedOnPasswordChanged by rememberUpdatedState(onPasswordChanged)
-	val rememberedOnLoginClicked by rememberUpdatedState(onLoginClicked)
-
-	val (
-		usernameFocusRequester,
-		passwordFocusRequester,
-	) = FocusRequester.createRefs()
-
-	var usernameTextFieldValue by remember {
-		mutableStateOf(
-			TextFieldValue(
-				text = state.username
-			)
-		)
-	}
-
-	var passwordTextFieldValue by remember {
-		mutableStateOf(
-			TextFieldValue(
-				text = state.password
-			)
-		)
-	}
 
 	val constraintSet = ConstraintSet {
 		val (
+			ppaBanner,
+			welcomeText,
 			middleContent,
 			bottomContent,
 		) = createRefsFor(
+			"ppaBanner",
+			"welcomeText",
 			"middleContent",
 			"bottomContent",
 		)
 
+		constrain(ppaBanner) {
+			top.linkTo(parent.top)
+			bottom.linkTo(welcomeText.top)
+
+			centerHorizontallyTo(parent)
+		}
+
+		constrain(welcomeText) {
+			top.linkTo(ppaBanner.bottom)
+			bottom.linkTo(middleContent.top)
+
+			centerHorizontallyTo(parent)
+		}
+
 		constrain(middleContent) {
-			centerTo(parent)
+			top.linkTo(welcomeText.bottom)
+			bottom.linkTo(bottomContent.top)
+
+			centerHorizontallyTo(parent)
 		}
 
 		constrain(bottomContent) {
-			top.linkTo(middleContent.bottom)
 			bottom.linkTo(parent.bottom)
 
 			centerHorizontallyTo(parent)
@@ -212,17 +217,135 @@ private fun LoginScreenContent(
 	ConstraintLayout(
 		constraintSet = constraintSet,
 		modifier = modifier
-			.padding(16.dp)
+	) {
+		Image(
+			painter = painterResource(id = R.drawable.ppa_banner),
+			contentDescription = null,
+			modifier = Modifier
+				.fillMaxWidth(0.48f)
+				.layoutId("ppaBanner")
+		)
+
+		Column(
+			horizontalAlignment = Alignment.CenterHorizontally,
+			modifier = Modifier
+				.layoutId("welcomeText")
+		) {
+			Text(
+				text = "Welcome Back",
+				style = PPATheme.typography.titleLarge
+			)
+
+			Text(
+				text = "Please sign in for access the app",
+				style = PPATheme.typography.bodyMedium
+			)
+		}
+
+		MiddleContent(
+			username = state.username,
+			password = state.password,
+			showPassword = state.showPassword,
+			usernameErrMsg = state.usernameErrMsg,
+			passwordErrMsg = state.passwordErrMsg,
+			onPasswordVisibilityChanged = onPasswordVisibilityChanged,
+			onUsernameChanged = onUsernameChanged,
+			onPasswordChanged = onPasswordChanged,
+			onRegisterClicked = onRegisterClicked,
+			onLoginClicked = onLoginClicked,
+			modifier = Modifier
+				.fillMaxWidth(0.86f)
+				.layoutId("middleContent")
+		)
+
+		Canvas(
+			modifier = Modifier
+				.fillMaxWidth()
+				.height(24.dp)
+				.clipToBounds()
+				.layoutId("bottomContent")
+		) {
+			drawOval(
+				color = Color.White,
+				size = size.copy(height = size.height * 2),
+				topLeft = Offset.Zero
+			)
+		}
+	}
+
+}
+
+@OptIn(ExperimentalComposeUiApi::class)
+@Composable
+private fun MiddleContent(
+	username: String,
+	password: String,
+	showPassword: Boolean,
+	modifier: Modifier = Modifier,
+	usernameErrMsg: String? = null,
+	passwordErrMsg: String? = null,
+	onPasswordVisibilityChanged: (Boolean) -> Unit = {},
+	onUsernameChanged: (String) -> Unit = {},
+	onPasswordChanged: (String) -> Unit = {},
+	onRegisterClicked: () -> Unit = {},
+	onLoginClicked: () -> Unit = {},
+) {
+
+	val context = LocalContext.current
+	val focusManager = LocalFocusManager.current
+	val keyboardController = LocalSoftwareKeyboardController.current
+
+	val rememberedOnUsernameChanged by rememberUpdatedState(onUsernameChanged)
+	val rememberedOnPasswordChanged by rememberUpdatedState(onPasswordChanged)
+	val rememberedOnLoginClicked by rememberUpdatedState(onLoginClicked)
+
+	val (
+		usernameFocusRequester,
+		passwordFocusRequester,
+	) = FocusRequester.createRefs()
+
+	var usernameTextFieldValue by remember {
+		mutableStateOf(
+			TextFieldValue(
+				text = username
+			)
+		)
+	}
+
+	var passwordTextFieldValue by remember {
+		mutableStateOf(
+			TextFieldValue(
+				text = password
+			)
+		)
+	}
+
+	Column(
+		horizontalAlignment = Alignment.CenterHorizontally,
+		verticalArrangement = Arrangement.spacedBy(8.dp),
+		modifier = modifier
 	) {
 		Column(
+			horizontalAlignment = Alignment.CenterHorizontally,
 			verticalArrangement = Arrangement.spacedBy(8.dp),
 			modifier = Modifier
-				.layoutId("middleContent")
+				.clip(RoundedCornerShape(8))
+				.background(PPATheme.colorScheme.onBackground)
+				.padding(24.dp)
 		) {
+			Text(
+				text = "Sign In",
+				style = PPATheme.typography.titleLarge.copy(
+					color = Color.Black
+				)
+			)
+
+			Spacer(modifier = Modifier.height(8.dp))
+
 			PPATextField(
 				value = usernameTextFieldValue,
 				singleLine = true,
-				isError = state.usernameErrMsg != null,
+				isError = usernameErrMsg != null,
 				keyboardOptions = KeyboardOptions(
 					imeAction = ImeAction.Next,
 					keyboardType = KeyboardType.Text
@@ -239,12 +362,12 @@ private fun LoginScreenContent(
 				placeholder = {
 					Text(stringResource(id = R.string.username))
 				},
-				supportingText = if (state.usernameErrMsg != null) {
+				supportingText = if (usernameErrMsg != null) {
 					{
 						Text(
-							text = state.usernameErrMsg.parse(context),
+							text = usernameErrMsg.parse(context),
 							style = LocalTextStyle.current.copy(
-								color = MaterialTheme.colorScheme.onBackground
+								color = MaterialTheme.colorScheme.error
 							)
 						)
 					}
@@ -257,8 +380,8 @@ private fun LoginScreenContent(
 			PPATextField(
 				value = passwordTextFieldValue,
 				singleLine = true,
-				isError = state.passwordErrMsg != null,
-				visualTransformation = if (state.showPassword) VisualTransformation.None
+				isError = passwordErrMsg != null,
+				visualTransformation = if (showPassword) VisualTransformation.None
 				else PasswordVisualTransformation(),
 				keyboardOptions = KeyboardOptions(
 					imeAction = ImeAction.Done,
@@ -276,12 +399,12 @@ private fun LoginScreenContent(
 				placeholder = {
 					Text(stringResource(id = R.string.password))
 				},
-				supportingText = if (state.passwordErrMsg != null) {
+				supportingText = if (passwordErrMsg != null) {
 					{
 						Text(
-							text = state.passwordErrMsg.parse(context),
+							text = passwordErrMsg.parse(context),
 							style = LocalTextStyle.current.copy(
-								color = MaterialTheme.colorScheme.onBackground
+								color = MaterialTheme.colorScheme.error
 							)
 						)
 					}
@@ -289,12 +412,12 @@ private fun LoginScreenContent(
 				trailingIcon = {
 					IconButton(
 						onClick = {
-							onPasswordVisibilityChanged(!state.showPassword)
+							onPasswordVisibilityChanged(!showPassword)
 						}
 					) {
 						AnimatedContent(
 							label = "show_password_button",
-							targetState = state.showPassword
+							targetState = showPassword
 						) { show ->
 							Icon(
 								painter = painterResource(
@@ -314,6 +437,10 @@ private fun LoginScreenContent(
 			Button(
 				shape = MaterialTheme.shapes.medium,
 				onClick = rememberedOnLoginClicked,
+				colors = ButtonDefaults.buttonColors(
+					containerColor = PPATheme.colorScheme.primary,
+					contentColor = PPATheme.colorScheme.onPrimary
+				),
 				modifier = Modifier
 					.fillMaxWidth()
 			) {
@@ -326,8 +453,8 @@ private fun LoginScreenContent(
 			) {
 				Text(
 					text = stringResource(id = R.string.forgot_password) + "?",
-					style = MaterialTheme.typography.bodyMedium.copy(
-						color = MaterialTheme.colorScheme.onBackground
+					style = PPATheme.typography.bodyMedium.copy(
+						color = Color.Black
 					)
 				)
 
@@ -335,41 +462,70 @@ private fun LoginScreenContent(
 					text = buildAnnotatedString {
 						append(stringResource(id = R.string.reset))
 					},
-					style = MaterialTheme.typography.bodyMedium.copy(
-						color = MaterialTheme.colorScheme.primary
+					style = PPATheme.typography.bodyMedium.copy(
+						color = PPATheme.colorScheme.primary
 					),
 					onClick = {
 						// TODO: Reset password
 					}
 				)
 			}
+
+			Row(
+				verticalAlignment = Alignment.CenterVertically,
+				horizontalArrangement = Arrangement.spacedBy(4.dp)
+			) {
+				Text(
+					text = stringResource(id = R.string.dont_have_an_account) + "?",
+					style = PPATheme.typography.bodyMedium.copy(
+						color = Color.Black
+					)
+				)
+
+				ClickableText(
+					text = buildAnnotatedString {
+						append(stringResource(id = R.string.create_account))
+					},
+					style = MaterialTheme.typography.bodyMedium.copy(
+						color = PPATheme.colorScheme.primary
+					),
+					onClick = {
+						onRegisterClicked()
+					}
+				)
+			}
 		}
 
-		Row(
-			verticalAlignment = Alignment.CenterVertically,
-			horizontalArrangement = Arrangement.spacedBy(4.dp),
-			modifier = Modifier
-				.layoutId("bottomContent")
+		Text(
+			text = "Or",
+			style = PPATheme.typography.bodyMedium
+		)
+
+		Button(
+			shape = MaterialTheme.shapes.medium,
+			contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
+			colors = ButtonDefaults.buttonColors(
+				containerColor = PPATheme.colorScheme.onBackground
+			),
+			onClick = {
+				// TODO: Sign in with googel
+			}
 		) {
-			Text(
-				text = stringResource(id = R.string.dont_have_an_account) + "?",
-				style = MaterialTheme.typography.bodyMedium.copy(
-					color = MaterialTheme.colorScheme.onBackground
-				)
+			Image(
+				painter = painterResource(id = R.drawable.ic_google),
+				contentDescription = null,
+				modifier = Modifier
+					.size(ButtonDefaults.IconSize)
 			)
 
-			ClickableText(
-				text = buildAnnotatedString {
-					append(stringResource(id = R.string.create_account))
-				},
-				style = MaterialTheme.typography.bodyMedium.copy(
-					color = MaterialTheme.colorScheme.primary
-				),
-				onClick = {
-					onRegisterClicked()
-				}
+			Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing))
+
+			Text(
+				text = "Sign in with google",
+				style = LocalTextStyle.current.copy(
+					color = PPATheme.colorScheme.inverseOnBackground
+				)
 			)
 		}
 	}
-
 }

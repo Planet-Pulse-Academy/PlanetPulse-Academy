@@ -19,7 +19,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Text
-import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -37,6 +36,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ufovanguard.planetpulseacademy.R
+import com.ufovanguard.planetpulseacademy.foundation.theme.PPATheme
 import com.ufovanguard.planetpulseacademy.foundation.theme.PlanetPulseAcademyTheme
 
 @Preview
@@ -77,9 +77,7 @@ fun PPATextField(
 	isError: Boolean = false,
 	enabled: Boolean = true,
 	readOnly: Boolean = false,
-	textStyle: TextStyle = TextStyle.Default.copy(
-		color = MaterialTheme.colorScheme.contentColorFor(MaterialTheme.colorScheme.surfaceContainer)
-	),
+	textStyle: TextStyle = PPATextFieldDefaults.textStyle,
 	keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
 	keyboardActions: KeyboardActions = KeyboardActions.Default,
 	singleLine: Boolean = false,
@@ -88,8 +86,8 @@ fun PPATextField(
 	visualTransformation: VisualTransformation = VisualTransformation.None,
 	onTextLayout: (TextLayoutResult) -> Unit = {},
 	interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-	cursorBrush: Brush = SolidColor(MaterialTheme.colorScheme.onSurfaceVariant),
-	containerColor: Color = MaterialTheme.colorScheme.surfaceContainerHigh,
+	cursorBrush: Brush = SolidColor(PPATheme.colorScheme.primary),
+	containerColor: Color = PPATheme.colorScheme.primaryContainer,
 	supportingText: @Composable (() -> Unit)? = null,
 	placeholder: @Composable (() -> Unit)? = null,
 	trailingIcon: @Composable (() -> Unit)? = null,
@@ -135,7 +133,9 @@ fun PPATextField(
 					cursorBrush = cursorBrush,
 					decorationBox = { innerTextField ->
 						Box(
-							contentAlignment = Alignment.CenterStart
+							contentAlignment = Alignment.CenterStart,
+							modifier = Modifier
+								.fillMaxWidth()
 						) {
 							if (placeholder != null && value.text.isEmpty()) {
 								ProvideTextStyle(
@@ -160,13 +160,19 @@ fun PPATextField(
 		if (supportingText != null && isError) {
 			ProvideTextStyle(
 				content = supportingText,
-				value = MaterialTheme.typography.labelMedium
+				value = PPATheme.typography.labelMedium
 			)
 		}
 	}
 }
 
 object PPATextFieldDefaults {
+
+	val textStyle: TextStyle
+		@Composable
+		get() = PPATheme.typography.bodyMedium.copy(
+			color = PPATheme.colorScheme.onPrimaryContainer
+		)
 
 	val contentPadding = PaddingValues(
 		vertical = 4.dp,

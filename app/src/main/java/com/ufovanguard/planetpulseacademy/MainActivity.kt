@@ -15,6 +15,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
+import com.ufovanguard.planetpulseacademy.foundation.theme.PPATheme
 import com.ufovanguard.planetpulseacademy.foundation.theme.PlanetPulseAcademyTheme
 import com.ufovanguard.planetpulseacademy.ui.app.PlanetPulseAcademy
 import com.ufovanguard.planetpulseacademy.ui.app.PlanetPulseAcademyViewModel
@@ -47,8 +48,8 @@ class MainActivity: ComponentActivity() {
 					LocalContentColor provides MaterialTheme.colorScheme.onBackground
 				) {
 					Surface(
-						color = MaterialTheme.colorScheme.background,
-						contentColor = MaterialTheme.colorScheme.onBackground,
+						color = PPATheme.colorScheme.background,
+						contentColor = PPATheme.colorScheme.onBackground,
 						modifier = Modifier
 							.fillMaxSize()
 					) {

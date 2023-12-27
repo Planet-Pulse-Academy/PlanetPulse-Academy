@@ -66,3 +66,13 @@ val md_theme_dark_scrim = Color(0xFF000000)
 
 
 val seed = Color(0xFF28CF6D)
+
+
+val ppa_theme_light_primary = Color(0xff1CD06F)
+val ppa_theme_light_primaryContainer = ppa_theme_light_primary.copy(alpha = 0.16f)
+val ppa_theme_light_onPrimary = Color(0xffFFFFFF)
+val ppa_theme_light_onPrimaryContainer = Color(0xff00173B)
+val ppa_theme_light_background = ppa_theme_light_primary
+val ppa_theme_light_onBackground = Color(0xffFFFFFF)
+val ppa_theme_light_inverseOnBackground = Color(0xff00173B)
+val ppa_theme_light_button = Color(0xffF1320D)
