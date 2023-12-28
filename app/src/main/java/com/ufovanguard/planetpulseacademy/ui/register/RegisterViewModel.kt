@@ -109,10 +109,28 @@ class RegisterViewModel @Inject constructor(
 	}
 
 	fun register() = viewModelScope.launch {
-		val passwordValidatorResult = PasswordValidator().validate(state.value.password)
-		val usernameValidatorResult = UsernameValidator().validate(state.value.username)
-		val emailValidatorResult = EmailValidator().validate(state.value.email)
-		val nameValidatorResult = NameValidator().validate(state.value.name)
+		val password = state.value.password.trim()
+		val username = state.value.username.trim()
+		val email = state.value.email.trim()
+		val name = state.value.name.trim()
+
+		val passwordValidatorResult = PasswordValidator().validate(password)
+		val usernameValidatorResult = UsernameValidator().validate(username)
+		val emailValidatorResult = EmailValidator().validate(email)
+		val nameValidatorResult = NameValidator().validate(name)
+
+		updateState {
+			copy(
+				password = password,
+				username = username,
+				email = email,
+				name = name,
+				passwordErrMsg = passwordValidatorResult.errMsg,
+				usernameErrMsg = usernameValidatorResult.errMsg,
+				emailErrMsg = emailValidatorResult.errMsg,
+				nameErrMsg = nameValidatorResult.errMsg
+			)
+		}
 
 		if (
 			passwordValidatorResult.isSuccess &&
@@ -129,23 +147,14 @@ class RegisterViewModel @Inject constructor(
 			workManager.enqueue(
 				Workers.registerWorker(
 					RegisterBody(
-						username = state.value.username.trim(),
-						password = state.value.password.trim(),
-						email = state.value.email.trim(),
-						name = state.value.name.trim()
+						username = username,
+						password = password,
+						email = email,
+						name = name
 					)
 				).also {
 					_currentRegisterWorkId.send(it.id)
 				}
-			)
-		}
-
-		updateState {
-			copy(
-				passwordErrMsg = passwordValidatorResult.errMsg,
-				usernameErrMsg = usernameValidatorResult.errMsg,
-				emailErrMsg = emailValidatorResult.errMsg,
-				nameErrMsg = nameValidatorResult.errMsg
 			)
 		}
 	}

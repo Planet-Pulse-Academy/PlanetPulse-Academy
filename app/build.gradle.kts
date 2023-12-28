@@ -194,6 +194,11 @@ dependencies {
     // Media
     implementation("androidx.media3:media3-exoplayer:1.2.0")
 
+	//Credentials support
+	implementation("androidx.credentials:credentials:1.2.0")
+	// optional - needed for credentials support from play services, for devices running Android 13 and below.
+	implementation("androidx.credentials:credentials-play-services-auth:1.2.0")
+
     // Accompanist
     implementation("com.google.accompanist:accompanist-navigation-material:$accompanist_version")
 

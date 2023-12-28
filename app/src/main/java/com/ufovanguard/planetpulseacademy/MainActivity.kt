@@ -15,16 +15,31 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
+import androidx.credentials.CreatePasswordRequest
+import androidx.credentials.CredentialManager
+import androidx.credentials.GetCredentialRequest
+import androidx.credentials.GetPasswordOption
+import androidx.credentials.PasswordCredential
+import androidx.credentials.exceptions.CreateCredentialCancellationException
+import androidx.credentials.exceptions.CreateCredentialException
+import androidx.credentials.exceptions.GetCredentialCancellationException
+import androidx.credentials.exceptions.GetCredentialException
+import androidx.credentials.exceptions.NoCredentialException
 import com.ufovanguard.planetpulseacademy.foundation.theme.PPATheme
 import com.ufovanguard.planetpulseacademy.foundation.theme.PlanetPulseAcademyTheme
 import com.ufovanguard.planetpulseacademy.ui.app.PlanetPulseAcademy
 import com.ufovanguard.planetpulseacademy.ui.app.PlanetPulseAcademyViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 
 @AndroidEntryPoint
 class MainActivity: ComponentActivity() {
 
 	private val viewModel: PlanetPulseAcademyViewModel by viewModels()
+
+	private val credentialManager by lazy {
+		CredentialManager.create(application)
+	}
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		// Set system bar and navigation bar color to transparent
@@ -60,6 +75,57 @@ class MainActivity: ComponentActivity() {
 				}
 			}
 		}
+	}
+
+	suspend fun saveCredential(
+		username: String,
+		password: String,
+		onSaved: () -> Unit = {},
+		onError: () -> Unit = {}
+	) {
+		try {
+			//Ask the user for permission to add the credentials
+			credentialManager.createCredential(
+				request = CreatePasswordRequest(username, password),
+				context = this
+			)
+
+			onSaved()
+
+			Timber.i("Credentials successfully added")
+		} catch (e: CreateCredentialCancellationException) {
+			//do nothing, the user chose not to save the credential
+			Timber.e("User cancelled the save")
+			onError()
+		} catch (e: CreateCredentialException) {
+			Timber.e("Credential save error", e)
+			onError()
+		}
+	}
+
+	suspend fun getCredential(): PasswordCredential? {
+		try {
+			val getRequest = GetCredentialRequest(
+				credentialOptions = listOf(GetPasswordOption())
+			)
+
+			val credentialResponse = credentialManager.getCredential(
+				request = getRequest,
+				context = this
+			)
+
+			return credentialResponse.credential as? PasswordCredential
+		} catch (e: GetCredentialCancellationException) {
+			Timber.i("User cancelled the request")
+			Timber.i(e)
+		} catch (e: NoCredentialException) {
+			Timber.i("No credential saved")
+			Timber.i(e)
+		} catch (e: GetCredentialException) {
+			Timber.e(e)
+		}
+
+		return null
 	}
 
 }

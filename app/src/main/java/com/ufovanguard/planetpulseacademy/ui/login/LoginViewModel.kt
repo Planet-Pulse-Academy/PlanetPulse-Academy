@@ -83,8 +83,20 @@ class LoginViewModel @Inject constructor(
 	}
 
 	fun login() = viewModelScope.launch {
-		val passwordValidatorResult = PasswordValidator().validate(state.value.password)
-		val usernameValidatorResult = UsernameValidator().validate(state.value.username)
+		val password = state.value.password.trim()
+		val username = state.value.username.trim()
+
+		val passwordValidatorResult = PasswordValidator().validate(password)
+		val usernameValidatorResult = UsernameValidator().validate(username)
+
+		updateState {
+			copy(
+				password = password,
+				username = username,
+				passwordErrMsg = passwordValidatorResult.errMsg,
+				usernameErrMsg = usernameValidatorResult.errMsg
+			)
+		}
 
 		if (passwordValidatorResult.isSuccess && usernameValidatorResult.isSuccess) {
 			updateState {
@@ -96,19 +108,12 @@ class LoginViewModel @Inject constructor(
 			workManager.enqueue(
 				Workers.loginWorker(
 					LoginBody(
-						username = state.value.username.trim(),
-						password = state.value.password.trim()
+						username = username,
+						password = password
 					)
 				).also {
 					_currentLoginWorkId.send(it.id)
 				}
-			)
-		}
-
-		updateState {
-			copy(
-				passwordErrMsg = passwordValidatorResult.errMsg,
-				usernameErrMsg = usernameValidatorResult.errMsg
 			)
 		}
 	}

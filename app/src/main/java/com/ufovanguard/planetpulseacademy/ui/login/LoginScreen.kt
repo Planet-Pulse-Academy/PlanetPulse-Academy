@@ -112,9 +112,21 @@ fun LoginScreen(
 		viewModel = viewModel,
 		onEvent = { event ->
 			when (event) {
-				// when login is successful, navigate to home screen
+				// when login is successful ask for save credential and navigate to home screen
 				is LoginUiEvent.LoginSuccess -> {
 					navigateTo(Destinations.Main.home)
+//					coroutineScope.launch {
+//						(context as MainActivity).saveCredential(
+//							username = state.username,
+//							password = state.password,
+//							onSaved = {
+//								navigateTo(Destinations.Main.home)
+//							},
+//							onError = {
+//								navigateTo(Destinations.Main.home)
+//							}
+//						)
+//					}
 				}
 			}
 		}
