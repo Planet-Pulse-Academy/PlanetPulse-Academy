@@ -178,6 +178,8 @@ private fun LoginScreenContent(
 			"bottomContent",
 		)
 
+		val topGuideline = createGuidelineFromTop(1f/4.5f)
+
 		constrain(ppaBanner) {
 			top.linkTo(parent.top)
 			bottom.linkTo(welcomeText.top)
@@ -187,14 +189,13 @@ private fun LoginScreenContent(
 
 		constrain(welcomeText) {
 			top.linkTo(ppaBanner.bottom)
-			bottom.linkTo(middleContent.top)
+			bottom.linkTo(topGuideline)
 
 			centerHorizontallyTo(parent)
 		}
 
 		constrain(middleContent) {
-			top.linkTo(welcomeText.bottom)
-			bottom.linkTo(bottomContent.top)
+			top.linkTo(topGuideline)
 
 			centerHorizontallyTo(parent)
 		}
@@ -246,12 +247,12 @@ private fun LoginScreenContent(
 				.layoutId("welcomeText")
 		) {
 			Text(
-				text = "Welcome Back",
+				text = stringResource(id = R.string.welcome_back),
 				style = PPATheme.typography.titleLarge
 			)
 
 			Text(
-				text = "Please sign in for access the app",
+				text = stringResource(id = R.string.please_sign_in_for_access_the_app),
 				style = PPATheme.typography.bodyMedium
 			)
 		}
@@ -451,7 +452,7 @@ private fun MiddleContent(
 				shape = MaterialTheme.shapes.medium,
 				onClick = onLoginClicked,
 				colors = ButtonDefaults.buttonColors(
-					containerColor = PPATheme.colorScheme.primary,
+					containerColor = PPATheme.colorScheme.button,
 					contentColor = PPATheme.colorScheme.onPrimary
 				),
 				modifier = Modifier
@@ -476,7 +477,7 @@ private fun MiddleContent(
 						append(stringResource(id = R.string.reset))
 					},
 					style = PPATheme.typography.bodyMedium.copy(
-						color = PPATheme.colorScheme.primary
+						color = PPATheme.colorScheme.button
 					),
 					onClick = {
 						// TODO: Reset password
@@ -500,7 +501,7 @@ private fun MiddleContent(
 						append(stringResource(id = R.string.sign_up))
 					},
 					style = MaterialTheme.typography.bodyMedium.copy(
-						color = PPATheme.colorScheme.primary
+						color = PPATheme.colorScheme.button
 					),
 					onClick = {
 						onRegisterClicked()

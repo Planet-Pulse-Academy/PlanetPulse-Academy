@@ -79,7 +79,8 @@ class RegisterViewModel @Inject constructor(
 	fun setUsername(username: String) {
 		updateState {
 			copy(
-				username = username
+				username = username,
+				usernameErrMsg = null
 			)
 		}
 	}
@@ -87,7 +88,8 @@ class RegisterViewModel @Inject constructor(
 	fun setPassword(password: String) {
 		updateState {
 			copy(
-				password = password
+				password = password,
+				passwordErrMsg = null
 			)
 		}
 	}
@@ -95,7 +97,8 @@ class RegisterViewModel @Inject constructor(
 	fun setEmail(email: String) {
 		updateState {
 			copy(
-				email = email
+				email = email,
+				emailErrMsg = null
 			)
 		}
 	}
@@ -103,7 +106,8 @@ class RegisterViewModel @Inject constructor(
 	fun setName(name: String) {
 		updateState {
 			copy(
-				name = name
+				name = name,
+				nameErrMsg = null
 			)
 		}
 	}

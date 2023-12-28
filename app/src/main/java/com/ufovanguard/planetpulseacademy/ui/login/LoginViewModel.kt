@@ -75,11 +75,21 @@ class LoginViewModel @Inject constructor(
 	}
 
 	fun setUsername(username: String) {
-		updateState { copy(username = username) }
+		updateState {
+			copy(
+				username = username,
+				usernameErrMsg = null
+			)
+		}
 	}
 
 	fun setPassword(password: String) {
-		updateState { copy(password = password) }
+		updateState {
+			copy(
+				password = password,
+				passwordErrMsg = null
+			)
+		}
 	}
 
 	fun login() = viewModelScope.launch {

@@ -161,6 +161,8 @@ private fun RegisterScreenContent(
 			"bottomContent",
 		)
 
+		val topGuideline = createGuidelineFromTop(1f/4.5f)
+
 		constrain(ppaBanner) {
 			top.linkTo(parent.top)
 			bottom.linkTo(welcomeText.top)
@@ -170,14 +172,13 @@ private fun RegisterScreenContent(
 
 		constrain(welcomeText) {
 			top.linkTo(ppaBanner.bottom)
-			bottom.linkTo(middleContent.top)
+			bottom.linkTo(topGuideline)
 
 			centerHorizontallyTo(parent)
 		}
 
 		constrain(middleContent) {
-			top.linkTo(welcomeText.bottom)
-			bottom.linkTo(bottomContent.top)
+			top.linkTo(topGuideline)
 
 			centerHorizontallyTo(parent)
 		}
@@ -536,7 +537,7 @@ private fun MiddleContent(
 				shape = MaterialTheme.shapes.medium,
 				onClick = onRegisterClicked,
 				colors = ButtonDefaults.buttonColors(
-					containerColor = PPATheme.colorScheme.primary,
+					containerColor = PPATheme.colorScheme.button,
 					contentColor = PPATheme.colorScheme.onPrimary
 				),
 				modifier = Modifier
@@ -561,7 +562,7 @@ private fun MiddleContent(
 						append(stringResource(id = R.string.sign_in))
 					},
 					style = MaterialTheme.typography.bodyMedium.copy(
-						color = PPATheme.colorScheme.primary
+						color = PPATheme.colorScheme.button
 					),
 					onClick = {
 						onLoginClicked()
