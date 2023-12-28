@@ -1,7 +1,7 @@
 package com.ufovanguard.planetpulseacademy
 
-import com.ufovanguard.planetpulseacademy.foundation.common.PasswordValidator
-import com.ufovanguard.planetpulseacademy.foundation.common.ValidatorResult
+import com.ufovanguard.planetpulseacademy.foundation.common.validator.PasswordValidator
+import com.ufovanguard.planetpulseacademy.foundation.common.validator.ValidatorResult
 import org.junit.jupiter.api.Test
 
 class PasswordValidatorTest {

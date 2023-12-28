@@ -8,10 +8,10 @@ import com.ufovanguard.planetpulseacademy.R
 import com.ufovanguard.planetpulseacademy.data.model.remote.body.RegisterBody
 import com.ufovanguard.planetpulseacademy.foundation.base.ui.BaseViewModel
 import com.ufovanguard.planetpulseacademy.foundation.base.ui.UiEvent
-import com.ufovanguard.planetpulseacademy.foundation.common.EmailValidator
-import com.ufovanguard.planetpulseacademy.foundation.common.NameValidator
-import com.ufovanguard.planetpulseacademy.foundation.common.PasswordValidator
-import com.ufovanguard.planetpulseacademy.foundation.common.UsernameValidator
+import com.ufovanguard.planetpulseacademy.foundation.common.validator.EmailValidator
+import com.ufovanguard.planetpulseacademy.foundation.common.validator.NameValidator
+import com.ufovanguard.planetpulseacademy.foundation.common.validator.PasswordValidator
+import com.ufovanguard.planetpulseacademy.foundation.common.validator.UsernameValidator
 import com.ufovanguard.planetpulseacademy.foundation.worker.RegisterWorker
 import com.ufovanguard.planetpulseacademy.foundation.worker.Workers
 import dagger.hilt.android.lifecycle.HiltViewModel

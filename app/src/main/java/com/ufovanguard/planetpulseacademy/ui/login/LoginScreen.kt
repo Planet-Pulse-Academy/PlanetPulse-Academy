@@ -72,7 +72,7 @@ import com.ufovanguard.planetpulseacademy.R
 import com.ufovanguard.planetpulseacademy.data.Destination
 import com.ufovanguard.planetpulseacademy.data.Destinations
 import com.ufovanguard.planetpulseacademy.foundation.base.ui.BaseScreenWrapper
-import com.ufovanguard.planetpulseacademy.foundation.common.ValidatorResult.Success.parse
+import com.ufovanguard.planetpulseacademy.foundation.common.validator.ValidatorResult.Success.parse
 import com.ufovanguard.planetpulseacademy.foundation.theme.PPATheme
 import com.ufovanguard.planetpulseacademy.foundation.theme.PlanetPulseAcademyTheme
 import com.ufovanguard.planetpulseacademy.foundation.uicomponent.PPATextField

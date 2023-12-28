@@ -7,8 +7,8 @@ import androidx.work.WorkManager
 import com.ufovanguard.planetpulseacademy.data.model.remote.body.LoginBody
 import com.ufovanguard.planetpulseacademy.data.repository.UserCredentialRepository
 import com.ufovanguard.planetpulseacademy.foundation.base.ui.BaseViewModel
-import com.ufovanguard.planetpulseacademy.foundation.common.PasswordValidator
-import com.ufovanguard.planetpulseacademy.foundation.common.UsernameValidator
+import com.ufovanguard.planetpulseacademy.foundation.common.validator.PasswordValidator
+import com.ufovanguard.planetpulseacademy.foundation.common.validator.UsernameValidator
 import com.ufovanguard.planetpulseacademy.foundation.worker.LoginWorker
 import com.ufovanguard.planetpulseacademy.foundation.worker.Workers
 import dagger.hilt.android.lifecycle.HiltViewModel

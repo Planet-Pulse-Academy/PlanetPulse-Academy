@@ -1,4 +1,4 @@
-package com.ufovanguard.planetpulseacademy.foundation.common
+package com.ufovanguard.planetpulseacademy.foundation.common.validator
 
 import com.ufovanguard.planetpulseacademy.R
 
