@@ -137,7 +137,8 @@ fun LoginScreen(
 
 }
 
-@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class,
+@OptIn(
+	ExperimentalMaterial3Api::class,
 	ExperimentalLayoutApi::class
 )
 @Composable
@@ -207,6 +208,7 @@ private fun LoginScreenContent(
 				contentAlignment = Alignment.Center
 			) {
 				CircularProgressIndicator(
+					color = PPATheme.colorScheme.primary,
 					modifier = Modifier
 						.size(32.dp)
 				)
@@ -297,7 +299,6 @@ private fun MiddleContent(
 
 	val rememberedOnUsernameChanged by rememberUpdatedState(onUsernameChanged)
 	val rememberedOnPasswordChanged by rememberUpdatedState(onPasswordChanged)
-	val rememberedOnLoginClicked by rememberUpdatedState(onLoginClicked)
 
 	val (
 		usernameFocusRequester,
@@ -334,7 +335,7 @@ private fun MiddleContent(
 				.padding(24.dp)
 		) {
 			Text(
-				text = "Sign In",
+				text = stringResource(id = R.string.sign_in),
 				style = PPATheme.typography.titleLarge.copy(
 					color = Color.Black
 				)
@@ -436,7 +437,7 @@ private fun MiddleContent(
 
 			Button(
 				shape = MaterialTheme.shapes.medium,
-				onClick = rememberedOnLoginClicked,
+				onClick = onLoginClicked,
 				colors = ButtonDefaults.buttonColors(
 					containerColor = PPATheme.colorScheme.primary,
 					contentColor = PPATheme.colorScheme.onPrimary
@@ -444,7 +445,7 @@ private fun MiddleContent(
 				modifier = Modifier
 					.fillMaxWidth()
 			) {
-				Text(stringResource(id = R.string.login))
+				Text(stringResource(id = R.string.sign_in))
 			}
 
 			Row(
@@ -484,7 +485,7 @@ private fun MiddleContent(
 
 				ClickableText(
 					text = buildAnnotatedString {
-						append(stringResource(id = R.string.create_account))
+						append(stringResource(id = R.string.sign_up))
 					},
 					style = MaterialTheme.typography.bodyMedium.copy(
 						color = PPATheme.colorScheme.primary
@@ -497,7 +498,7 @@ private fun MiddleContent(
 		}
 
 		Text(
-			text = "Or",
+			text = stringResource(id = R.string.or),
 			style = PPATheme.typography.bodyMedium
 		)
 
@@ -521,7 +522,7 @@ private fun MiddleContent(
 			Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing))
 
 			Text(
-				text = "Sign in with google",
+				text = stringResource(id = R.string.sign_in_with_google),
 				style = LocalTextStyle.current.copy(
 					color = PPATheme.colorScheme.inverseOnBackground
 				)
