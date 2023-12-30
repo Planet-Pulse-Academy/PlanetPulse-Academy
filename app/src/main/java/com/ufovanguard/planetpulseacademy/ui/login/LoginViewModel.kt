@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.ufovanguard.planetpulseacademy.data.model.remote.body.LoginBody
-import com.ufovanguard.planetpulseacademy.data.repository.UserCredentialRepository
+import com.ufovanguard.planetpulseacademy.data.repository.UserPreferenceRepository
 import com.ufovanguard.planetpulseacademy.foundation.base.ui.BaseViewModel
 import com.ufovanguard.planetpulseacademy.foundation.common.validator.PasswordValidator
 import com.ufovanguard.planetpulseacademy.foundation.common.validator.UsernameValidator
@@ -26,7 +26,7 @@ import javax.inject.Inject
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-	private val userCredentialRepository: UserCredentialRepository,
+	private val userPreferenceRepository: UserPreferenceRepository,
 	private val workManager: WorkManager,
 	savedStateHandle: SavedStateHandle
 ): BaseViewModel<LoginState>(
@@ -42,6 +42,10 @@ class LoginViewModel @Inject constructor(
 			currentLoginWorkId.filterNotNull().flatMapLatest { uuid ->
 				workManager.getWorkInfoByIdFlow(uuid)
 			}.collectLatest { workInfo ->
+				if (workInfo.state == WorkInfo.State.SUCCEEDED) {
+					userPreferenceRepository.setIsFirstInstall(false)
+				}
+
 				updateState {
 					when (workInfo.state) {
 						WorkInfo.State.SUCCEEDED -> {
