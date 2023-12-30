@@ -107,6 +107,15 @@ fun PlanetPulseAcademy(
 							}
 						)
 					}
+
+					composable(Destinations.Main.quiz.route) { backEntry ->
+						HomeScreen(
+							viewModel = hiltViewModel(backEntry),
+							navigateTo = { dest ->
+								navController.navigate(dest.route)
+							}
+						)
+					}
 				}
 			}
 		}
