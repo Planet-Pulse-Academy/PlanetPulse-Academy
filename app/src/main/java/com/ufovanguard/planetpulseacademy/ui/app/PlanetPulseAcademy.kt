@@ -10,6 +10,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
+import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
@@ -19,6 +21,7 @@ import com.google.accompanist.navigation.material.ExperimentalMaterialNavigation
 import com.google.accompanist.navigation.material.ModalBottomSheetLayout
 import com.ufovanguard.planetpulseacademy.data.Destination
 import com.ufovanguard.planetpulseacademy.data.Destinations
+import com.ufovanguard.planetpulseacademy.ui.forgot_password.ForgotPasswordScreen
 import com.ufovanguard.planetpulseacademy.ui.home.HomeScreen
 import com.ufovanguard.planetpulseacademy.ui.lesson.LessonScreen
 import com.ufovanguard.planetpulseacademy.ui.login.LoginScreen
@@ -46,7 +49,10 @@ fun PlanetPulseAcademy(
 
 	val navController = rememberNavController(bottomSheetNavigator)
 
-	val navigateTo: (Destination) -> Unit = { navController.navigate(it.route) }
+	val navigateTo: (Destination, builder: (NavOptionsBuilder.() -> Unit)?) -> Unit = { dest, builder ->
+		if (builder != null) navController.navigate(dest.route, builder)
+		else navController.navigate(dest.route)
+	}
 
 	ModalBottomSheetLayout(
 		bottomSheetNavigator = bottomSheetNavigator,
@@ -83,7 +89,7 @@ fun PlanetPulseAcademy(
 					composable(Destinations.Auth.register.route) { backEntry ->
 						RegisterScreen(
 							viewModel = hiltViewModel(backEntry),
-							navigateTo = navigateTo
+							onNavigateUp = navController::popBackStack
 						)
 					}
 
@@ -91,6 +97,13 @@ fun PlanetPulseAcademy(
 						LoginScreen(
 							viewModel = hiltViewModel(backEntry),
 							navigateTo = navigateTo
+						)
+					}
+
+					composable(Destinations.Auth.forgotPassword.route) { backEntry ->
+						ForgotPasswordScreen(
+							viewModel = hiltViewModel(backEntry),
+							onNavigateUp = navController::popBackStack
 						)
 					}
 				}
@@ -132,4 +145,8 @@ fun PlanetPulseAcademy(
 		}
 	}
 
+}
+
+private fun navigateTo(navController: NavController, dest: Destination, inclusive: Boolean = false) {
+	navController.navigate(dest.route)
 }

@@ -10,6 +10,7 @@ import androidx.navigation.NavDeepLink
  */
 
 object DestinationRoute {
+	const val FORGOT_PASSWORD = "forgot_password"
 	const val ONBOARDING = "onboarding"
 	const val REGISTER = "register"
 	const val PROFILE = "profile"
@@ -112,6 +113,10 @@ object Destinations {
 
 		val login = Destination(
 			route = DestinationRoute.LOGIN
+		)
+
+		val forgotPassword = Destination(
+			route = DestinationRoute.FORGOT_PASSWORD
 		)
 	}
 

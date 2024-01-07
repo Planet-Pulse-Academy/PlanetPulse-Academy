@@ -8,6 +8,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavOptionsBuilder
 import com.ufovanguard.planetpulseacademy.data.Destination
 import com.ufovanguard.planetpulseacademy.foundation.base.ui.BaseScreenWrapper
 import com.ufovanguard.planetpulseacademy.foundation.theme.PPATheme
@@ -31,7 +32,7 @@ private fun LessonScreenPreview() {
 fun LessonScreen(
 	viewModel: LessonViewModel,
 	onNavigateUp: () -> Unit,
-	navigateTo: (Destination) -> Unit
+	navigateTo: (Destination, builder: (NavOptionsBuilder.() -> Unit)?) -> Unit
 ) {
 
 	val state by viewModel.state.collectAsStateWithLifecycle()

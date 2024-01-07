@@ -5,8 +5,11 @@ import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequest
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.workDataOf
+import com.ufovanguard.planetpulseacademy.data.model.remote.body.ForgotPasswordBody
 import com.ufovanguard.planetpulseacademy.data.model.remote.body.LoginBody
 import com.ufovanguard.planetpulseacademy.data.model.remote.body.RegisterBody
+import com.ufovanguard.planetpulseacademy.data.model.remote.body.ResetPasswordBody
+import com.ufovanguard.planetpulseacademy.data.model.remote.body.VerifyOtpBody
 import com.ufovanguard.planetpulseacademy.foundation.extension.toJson
 
 object Workers {
@@ -36,6 +39,53 @@ object Workers {
 			.setInputData(
 				workDataOf(
 					RegisterWorker.EXTRA_REQUEST_BODY to registerBody.toJson()
+				)
+			)
+			.build()
+	}
+
+	fun forgotPasswordWorker(forgotPasswordBody: ForgotPasswordBody): OneTimeWorkRequest {
+		return OneTimeWorkRequestBuilder<ForgotPasswordWorker>()
+			.setConstraints(
+				Constraints(
+					requiredNetworkType = NetworkType.CONNECTED
+				)
+			)
+			.setInputData(
+				workDataOf(
+					ForgotPasswordWorker.EXTRA_REQUEST_BODY to forgotPasswordBody.toJson()
+				)
+			)
+			.build()
+	}
+
+	fun verifyOtp(email: String, verifyOtpBody: VerifyOtpBody): OneTimeWorkRequest {
+		return OneTimeWorkRequestBuilder<VerifyOtpWorker>()
+			.setConstraints(
+				Constraints(
+					requiredNetworkType = NetworkType.CONNECTED
+				)
+			)
+			.setInputData(
+				workDataOf(
+					VerifyOtpWorker.EXTRA_EMAIL to email,
+					VerifyOtpWorker.EXTRA_REQUEST_BODY to verifyOtpBody.toJson()
+				)
+			)
+			.build()
+	}
+
+	fun resetPassword(code: String, resetPasswordBody: ResetPasswordBody): OneTimeWorkRequest {
+		return OneTimeWorkRequestBuilder<ResetPasswordWorker>()
+			.setConstraints(
+				Constraints(
+					requiredNetworkType = NetworkType.CONNECTED
+				)
+			)
+			.setInputData(
+				workDataOf(
+					ResetPasswordWorker.EXTRA_CODE to code,
+					ResetPasswordWorker.EXTRA_REQUEST_BODY to resetPasswordBody.toJson()
 				)
 			)
 			.build()

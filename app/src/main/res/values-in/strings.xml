@@ -27,5 +27,12 @@
     <string name="please_sign_up_for_access_the_app">Harap daftar untuk mengakses aplikasi</string>
     <string name="sign_in_with_google">Masuk dengan Google</string>
     <string name="or">Atau</string>
+    <string name="confirm_password">Konfirmasi kata sandi</string>
+    <string name="confirm">Konfirmasi</string>
+    <string name="otp_has_been_sent_to_your_email">OTP telah dikirim ke email kamu</string>
+    <string name="new_password">Kata sandi baru</string>
+    <string name="password_must_be_the_same">Kata sandi harus sama</string>
+    <string name="password_reset_successful">Atur ulang kata sandi berhasil</string>
+    <string name="otp_cannot_be_empty">OTP tidak boleh kosong</string>
 
 </resources>

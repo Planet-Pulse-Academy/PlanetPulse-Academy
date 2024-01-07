@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -94,6 +95,126 @@ fun PPATextField(
 	leadingIcon: @Composable (() -> Unit)? = null,
 ) {
 
+	PPATextFieldContainer(
+		paddingValues = paddingValues,
+		shape = shape,
+		isError = isError,
+		containerColor = containerColor,
+		supportingText = supportingText,
+		trailingIcon = trailingIcon,
+		leadingIcon = leadingIcon,
+		textField = {
+			BasicTextField(
+				value = value,
+				onValueChange = onValueChange,
+				enabled = enabled,
+				readOnly = readOnly,
+				textStyle = textStyle,
+				keyboardOptions = keyboardOptions,
+				keyboardActions = keyboardActions,
+				singleLine = singleLine,
+				maxLines = maxLines,
+				minLines = minLines,
+				visualTransformation = visualTransformation,
+				onTextLayout = onTextLayout,
+				interactionSource = interactionSource,
+				cursorBrush = cursorBrush,
+				decorationBox = { innerTextField ->
+					DecorationBox(
+						value = value.text,
+						textStyle = textStyle,
+						placeholder = placeholder,
+						innerTextField = innerTextField,
+						modifier = Modifier
+							.fillMaxWidth()
+					)
+				},
+				modifier = modifier
+					.weight(1f)
+			)
+		}
+	)
+}
+
+@Composable
+fun PPATextField(
+	value: String,
+	onValueChange: (String) -> Unit,
+	modifier: Modifier = Modifier,
+	paddingValues: PaddingValues = PPATextFieldDefaults.contentPadding,
+	shape: Shape = MaterialTheme.shapes.medium,
+	isError: Boolean = false,
+	enabled: Boolean = true,
+	readOnly: Boolean = false,
+	textStyle: TextStyle = PPATextFieldDefaults.textStyle,
+	keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+	keyboardActions: KeyboardActions = KeyboardActions.Default,
+	singleLine: Boolean = false,
+	maxLines: Int = if (singleLine) 1 else Int.MAX_VALUE,
+	minLines: Int = 1,
+	visualTransformation: VisualTransformation = VisualTransformation.None,
+	onTextLayout: (TextLayoutResult) -> Unit = {},
+	interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+	cursorBrush: Brush = SolidColor(PPATheme.colorScheme.primary),
+	containerColor: Color = PPATheme.colorScheme.primaryContainer,
+	supportingText: @Composable (() -> Unit)? = null,
+	placeholder: @Composable (() -> Unit)? = null,
+	trailingIcon: @Composable (() -> Unit)? = null,
+	leadingIcon: @Composable (() -> Unit)? = null,
+) {
+
+	PPATextFieldContainer(
+		paddingValues = paddingValues,
+		shape = shape,
+		isError = isError,
+		containerColor = containerColor,
+		supportingText = supportingText,
+		trailingIcon = trailingIcon,
+		leadingIcon = leadingIcon,
+		textField = {
+			BasicTextField(
+				value = value,
+				onValueChange = onValueChange,
+				enabled = enabled,
+				readOnly = readOnly,
+				textStyle = textStyle,
+				keyboardOptions = keyboardOptions,
+				keyboardActions = keyboardActions,
+				singleLine = singleLine,
+				maxLines = maxLines,
+				minLines = minLines,
+				visualTransformation = visualTransformation,
+				onTextLayout = onTextLayout,
+				interactionSource = interactionSource,
+				cursorBrush = cursorBrush,
+				decorationBox = { innerTextField ->
+					DecorationBox(
+						value = value,
+						textStyle = textStyle,
+						placeholder = placeholder,
+						innerTextField = innerTextField,
+						modifier = Modifier
+							.fillMaxWidth()
+					)
+				},
+				modifier = modifier
+					.weight(1f)
+			)
+		}
+	)
+}
+
+@Composable
+private fun PPATextFieldContainer(
+	paddingValues: PaddingValues = PPATextFieldDefaults.contentPadding,
+	shape: Shape = MaterialTheme.shapes.medium,
+	isError: Boolean = false,
+	containerColor: Color = PPATheme.colorScheme.primaryContainer,
+	supportingText: @Composable (() -> Unit)? = null,
+	trailingIcon: @Composable (() -> Unit)? = null,
+	leadingIcon: @Composable (() -> Unit)? = null,
+	textField: @Composable RowScope.() -> Unit
+) {
 	Column {
 		Box(
 			contentAlignment = Alignment.CenterStart,
@@ -116,42 +237,7 @@ fun PPATextField(
 			) {
 				leadingIcon?.invoke()
 
-				BasicTextField(
-					value = value,
-					onValueChange = onValueChange,
-					enabled = enabled,
-					readOnly = readOnly,
-					textStyle = textStyle,
-					keyboardOptions = keyboardOptions,
-					keyboardActions = keyboardActions,
-					singleLine = singleLine,
-					maxLines = maxLines,
-					minLines = minLines,
-					visualTransformation = visualTransformation,
-					onTextLayout = onTextLayout,
-					interactionSource = interactionSource,
-					cursorBrush = cursorBrush,
-					decorationBox = { innerTextField ->
-						Box(
-							contentAlignment = Alignment.CenterStart,
-							modifier = Modifier
-								.fillMaxWidth()
-						) {
-							if (placeholder != null && value.text.isEmpty()) {
-								ProvideTextStyle(
-									content = placeholder,
-									value = textStyle.copy(
-										color = textStyle.color.copy(alpha = 0.48f)
-									)
-								)
-							}
-
-							innerTextField()
-						}
-					},
-					modifier = modifier
-						.weight(1f)
-				)
+				textField()
 
 				trailingIcon?.invoke()
 			}
@@ -166,12 +252,37 @@ fun PPATextField(
 	}
 }
 
+@Composable
+private fun DecorationBox(
+	value: String,
+	textStyle: TextStyle,
+	modifier: Modifier = Modifier,
+	innerTextField: @Composable () -> Unit,
+	placeholder: @Composable (() -> Unit)?
+) {
+	Box(
+		contentAlignment = Alignment.CenterStart,
+		modifier = modifier
+	) {
+		if (placeholder != null && value.isEmpty()) {
+			ProvideTextStyle(
+				content = placeholder,
+				value = textStyle.copy(
+					color = textStyle.color.copy(alpha = 0.7f)
+				)
+			)
+		}
+
+		innerTextField()
+	}
+}
+
 object PPATextFieldDefaults {
 
 	val textStyle: TextStyle
 		@Composable
 		get() = PPATheme.typography.bodyMedium.copy(
-			color = PPATheme.colorScheme.onPrimaryContainer
+			color = PPATheme.colorScheme.inverseOnBackground
 		)
 
 	val contentPadding = PaddingValues(

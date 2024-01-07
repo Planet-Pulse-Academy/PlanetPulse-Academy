@@ -67,10 +67,9 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ufovanguard.planetpulseacademy.R
-import com.ufovanguard.planetpulseacademy.data.Destination
-import com.ufovanguard.planetpulseacademy.data.Destinations
 import com.ufovanguard.planetpulseacademy.foundation.base.ui.BaseScreenWrapper
 import com.ufovanguard.planetpulseacademy.foundation.common.validator.ValidatorResult.Success.parse
+import com.ufovanguard.planetpulseacademy.foundation.extension.preventSelection
 import com.ufovanguard.planetpulseacademy.foundation.theme.PPATheme
 import com.ufovanguard.planetpulseacademy.foundation.theme.PlanetPulseAcademyTheme
 import com.ufovanguard.planetpulseacademy.foundation.uicomponent.PPATextField
@@ -93,7 +92,7 @@ private fun RegisterScreenPreview() {
 @Composable
 fun RegisterScreen(
 	viewModel: RegisterViewModel,
-	navigateTo: (Destination) -> Unit
+	onNavigateUp: () -> Unit
 ) {
 
 	val state by viewModel.state.collectAsStateWithLifecycle()
@@ -104,7 +103,7 @@ fun RegisterScreen(
 			when (event) {
 				// when register is successful, navigate to login screen
 				is RegisterUiEvent.RegisterSuccess -> {
-					navigateTo(Destinations.Auth.login)
+					onNavigateUp()
 				}
 			}
 		}
@@ -117,9 +116,7 @@ fun RegisterScreen(
 			onUsernameChanged = viewModel::setUsername,
 			onPasswordChanged = viewModel::setPassword,
 			onRegisterClicked = viewModel::register,
-			onLoginClicked = {
-				navigateTo(Destinations.Auth.login)
-			},
+			onLoginClicked = onNavigateUp,
 			modifier = Modifier
 				.fillMaxSize()
 				.background(PPATheme.colorScheme.background)
@@ -385,7 +382,7 @@ private fun MiddleContent(
 					}
 				),
 				onValueChange = { newValue ->
-					nameTextFieldValue = newValue
+					nameTextFieldValue = newValue.preventSelection(nameTextFieldValue)
 					rememberedOnNameChanged(nameTextFieldValue.text)
 				},
 				placeholder = {
@@ -420,7 +417,7 @@ private fun MiddleContent(
 					}
 				),
 				onValueChange = { newValue ->
-					emailTextFieldValue = newValue
+					emailTextFieldValue = newValue.preventSelection(emailTextFieldValue)
 					rememberedOnEmailChanged(emailTextFieldValue.text)
 				},
 				placeholder = {
@@ -455,7 +452,7 @@ private fun MiddleContent(
 					}
 				),
 				onValueChange = { newValue ->
-					usernameTextFieldValue = newValue
+					usernameTextFieldValue = newValue.preventSelection(usernameTextFieldValue)
 					rememberedOnUsernameChanged(usernameTextFieldValue.text)
 				},
 				placeholder = {
@@ -492,7 +489,7 @@ private fun MiddleContent(
 					}
 				),
 				onValueChange = { newValue ->
-					passwordTextFieldValue = newValue
+					passwordTextFieldValue = newValue.preventSelection(passwordTextFieldValue)
 					rememberedOnPasswordChanged(passwordTextFieldValue.text)
 				},
 				placeholder = {
@@ -523,7 +520,8 @@ private fun MiddleContent(
 									id = if (show) R.drawable.ic_eye
 									else R.drawable.ic_eye_slash
 								),
-								contentDescription = null
+								contentDescription = null,
+								tint = PPATheme.colorScheme.inverseOnBackground.copy(alpha = 0.7f)
 							)
 						}
 					}

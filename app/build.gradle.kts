@@ -71,7 +71,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.5"
+        kotlinCompilerExtensionVersion = "1.5.7"
     }
     packaging {
         resources {
@@ -106,7 +106,7 @@ wire {
 
 dependencies {
 
-    val compose_version = "1.5.4"
+	val compose_version by extra("1.5.4")
 	val espresso_version = "3.5.1"
 	val lifecycle_version = "2.6.2"
 	val accompanist_version = "0.32.0"
@@ -121,32 +121,31 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("androidx.activity:activity-compose:1.8.2")
     implementation("androidx.compose.runtime:runtime:1.5.4")
-    implementation("androidx.compose.runtime:runtime-livedata:$compose_version")
+    implementation("androidx.compose.runtime:runtime-livedata:${extra["compose_version"]}")
     implementation("androidx.navigation:navigation-compose:2.7.6")
     implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
     implementation("androidx.core:core-splashscreen:1.0.1")
 
     // Compose Common
-    implementation("androidx.compose.ui:ui:$compose_version")
-    implementation("androidx.compose.ui:ui-tooling-preview:$compose_version")
-    implementation("androidx.compose.foundation:foundation:$compose_version")
-    implementation("androidx.compose.ui:ui-util:$compose_version")
-    implementation("androidx.compose.animation:animation:$compose_version")
+    implementation("androidx.compose.ui:ui:${extra["compose_version"]}")
+    implementation("androidx.compose.ui:ui-tooling-preview:${extra["compose_version"]}")
+    implementation("androidx.compose.foundation:foundation:${extra["compose_version"]}")
+    implementation("androidx.compose.ui:ui-util:${extra["compose_version"]}")
+    implementation("androidx.compose.animation:animation:${extra["compose_version"]}")
 
     // Compose Android
-    implementation("androidx.compose.ui:ui-android:$compose_version")
-    implementation("androidx.compose.ui:ui-tooling-preview-android:$compose_version")
-    implementation("androidx.compose.foundation:foundation-android:$compose_version")
-    implementation("androidx.compose.ui:ui-util-android:$compose_version")
-    implementation("androidx.compose.animation:animation-android:$compose_version")
+    implementation("androidx.compose.ui:ui-android:${extra["compose_version"]}")
+    implementation("androidx.compose.ui:ui-tooling-preview-android:${extra["compose_version"]}")
+	implementation("androidx.compose.ui:ui-util-android:${rootProject.extra["compose_version"]}")
+    implementation("androidx.compose.animation:animation-android:${extra["compose_version"]}")
 
     // Constraint layout
     implementation("androidx.constraintlayout:constraintlayout-compose:1.1.0-alpha13")
 
     // Material Design
     implementation("com.google.android.material:material:1.11.0")
-    implementation("androidx.compose.material:material:$compose_version")
-    implementation("androidx.compose.material:material-icons-extended:$compose_version")
+    implementation("androidx.compose.material:material:${extra["compose_version"]}")
+    implementation("androidx.compose.material:material-icons-extended:${extra["compose_version"]}")
     implementation("androidx.compose.material3:material3-android:1.2.0-beta01")
     implementation("androidx.compose.material3:material3-window-size-class:1.1.2")
 

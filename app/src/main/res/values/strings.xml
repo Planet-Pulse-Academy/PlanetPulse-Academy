@@ -27,4 +27,12 @@
     <string name="please_sign_up_for_access_the_app">Please sign up for access the app</string>
     <string name="sign_in_with_google">Sign in with Google</string>
     <string name="or">Or</string>
+    <string name="otp" translatable="false">OTP</string>
+    <string name="confirm_password">Confirm password</string>
+    <string name="confirm">Confirm</string>
+    <string name="otp_has_been_sent_to_your_email">OTP has been sent to your email</string>
+    <string name="new_password">New password</string>
+    <string name="password_must_be_the_same">Password must be the same</string>
+    <string name="password_reset_successful">Password reset successful</string>
+    <string name="otp_cannot_be_empty">OTP cannot be empty</string>
 </resources>

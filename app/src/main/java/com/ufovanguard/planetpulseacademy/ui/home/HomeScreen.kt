@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavOptionsBuilder
 import com.ufovanguard.planetpulseacademy.data.Destination
 import com.ufovanguard.planetpulseacademy.foundation.base.ui.BaseScreenWrapper
 import com.ufovanguard.planetpulseacademy.foundation.theme.PPATheme
@@ -25,7 +26,7 @@ import com.ufovanguard.planetpulseacademy.foundation.theme.PPATheme
 @Composable
 fun HomeScreen(
 	viewModel: HomeViewModel,
-	navigateTo: (Destination) -> Unit
+	navigateTo: (Destination, builder: (NavOptionsBuilder.() -> Unit)?) -> Unit
 ) {
 
 	val state by viewModel.state.collectAsStateWithLifecycle()

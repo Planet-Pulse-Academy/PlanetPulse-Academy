@@ -68,11 +68,13 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavOptionsBuilder
 import com.ufovanguard.planetpulseacademy.R
 import com.ufovanguard.planetpulseacademy.data.Destination
 import com.ufovanguard.planetpulseacademy.data.Destinations
 import com.ufovanguard.planetpulseacademy.foundation.base.ui.BaseScreenWrapper
 import com.ufovanguard.planetpulseacademy.foundation.common.validator.ValidatorResult.Success.parse
+import com.ufovanguard.planetpulseacademy.foundation.extension.preventSelection
 import com.ufovanguard.planetpulseacademy.foundation.theme.PPATheme
 import com.ufovanguard.planetpulseacademy.foundation.theme.PlanetPulseAcademyTheme
 import com.ufovanguard.planetpulseacademy.foundation.uicomponent.PPATextField
@@ -103,7 +105,7 @@ private fun LoginScreenPreview(
 @Composable
 fun LoginScreen(
 	viewModel: LoginViewModel,
-	navigateTo: (Destination) -> Unit
+	navigateTo: (Destination, builder: (NavOptionsBuilder.() -> Unit)?) -> Unit
 ) {
 
 	val state by viewModel.state.collectAsStateWithLifecycle()
@@ -114,7 +116,11 @@ fun LoginScreen(
 			when (event) {
 				// when login is successful ask for save credential and navigate to home screen
 				is LoginUiEvent.LoginSuccess -> {
-					navigateTo(Destinations.Main.home)
+					navigateTo(Destinations.Main.home) {
+						popUpTo(Destinations.Auth.route.route) {
+							inclusive = true
+						}
+					}
 //					coroutineScope.launch {
 //						(context as MainActivity).saveCredential(
 //							username = state.username,
@@ -138,7 +144,10 @@ fun LoginScreen(
 			onPasswordChanged = viewModel::setPassword,
 			onLoginClicked = viewModel::login,
 			onRegisterClicked = {
-				navigateTo(Destinations.Auth.register)
+				navigateTo(Destinations.Auth.register, null)
+			},
+			onForgotPasswordClicked = {
+				navigateTo(Destinations.Auth.forgotPassword, null)
 			},
 			modifier = Modifier
 				.fillMaxSize()
@@ -160,6 +169,7 @@ private fun LoginScreenContent(
 	onPasswordVisibilityChanged: (Boolean) -> Unit = {},
 	onUsernameChanged: (String) -> Unit = {},
 	onPasswordChanged: (String) -> Unit = {},
+	onForgotPasswordClicked: () -> Unit = {},
 	onRegisterClicked: () -> Unit = {},
 	onLoginClicked: () -> Unit = {},
 ) {
@@ -264,6 +274,7 @@ private fun LoginScreenContent(
 			usernameErrMsg = state.usernameErrMsg,
 			passwordErrMsg = state.passwordErrMsg,
 			onPasswordVisibilityChanged = onPasswordVisibilityChanged,
+			onForgotPasswordClicked = onForgotPasswordClicked,
 			onUsernameChanged = onUsernameChanged,
 			onPasswordChanged = onPasswordChanged,
 			onRegisterClicked = onRegisterClicked,
@@ -302,6 +313,7 @@ private fun MiddleContent(
 	onPasswordVisibilityChanged: (Boolean) -> Unit = {},
 	onUsernameChanged: (String) -> Unit = {},
 	onPasswordChanged: (String) -> Unit = {},
+	onForgotPasswordClicked: () -> Unit = {},
 	onRegisterClicked: () -> Unit = {},
 	onLoginClicked: () -> Unit = {},
 ) {
@@ -320,9 +332,7 @@ private fun MiddleContent(
 
 	var usernameTextFieldValue by remember {
 		mutableStateOf(
-			TextFieldValue(
-				text = username
-			)
+			TextFieldValue()
 		)
 	}
 
@@ -370,8 +380,8 @@ private fun MiddleContent(
 					}
 				),
 				onValueChange = { newValue ->
-					usernameTextFieldValue = newValue
-					rememberedOnUsernameChanged(usernameTextFieldValue.text)
+					usernameTextFieldValue = newValue.preventSelection(usernameTextFieldValue)
+					rememberedOnUsernameChanged(newValue.text)
 				},
 				placeholder = {
 					Text(stringResource(id = R.string.username))
@@ -407,7 +417,7 @@ private fun MiddleContent(
 					}
 				),
 				onValueChange = { newValue ->
-					passwordTextFieldValue = newValue
+					passwordTextFieldValue = newValue.preventSelection(passwordTextFieldValue)
 					rememberedOnPasswordChanged(passwordTextFieldValue.text)
 				},
 				placeholder = {
@@ -438,7 +448,8 @@ private fun MiddleContent(
 									id = if (show) R.drawable.ic_eye
 									else R.drawable.ic_eye_slash
 								),
-								contentDescription = null
+								contentDescription = null,
+								tint = PPATheme.colorScheme.inverseOnBackground.copy(alpha = 0.7f)
 							)
 						}
 					}
@@ -480,7 +491,7 @@ private fun MiddleContent(
 						color = PPATheme.colorScheme.button
 					),
 					onClick = {
-						// TODO: Reset password
+						onForgotPasswordClicked()
 					}
 				)
 			}

@@ -5,22 +5,18 @@ import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
-import com.auth0.android.jwt.JWT
 import com.google.gson.Gson
-import com.ufovanguard.planetpulseacademy.data.model.remote.body.LoginBody
+import com.ufovanguard.planetpulseacademy.data.model.remote.body.VerifyOtpBody
 import com.ufovanguard.planetpulseacademy.data.model.remote.response.ErrorResponse
 import com.ufovanguard.planetpulseacademy.data.repository.AuthRepository
-import com.ufovanguard.planetpulseacademy.data.repository.UserCredentialRepository
 import com.ufovanguard.planetpulseacademy.foundation.extension.fromJson
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import timber.log.Timber
 
 @HiltWorker
-class LoginWorker @AssistedInject constructor(
+class VerifyOtpWorker @AssistedInject constructor(
 	@Assisted private val context: Context,
 	@Assisted params: WorkerParameters,
-	private val userCredentialRepository: UserCredentialRepository,
 	private val authRepository: AuthRepository
 ): CoroutineWorker(context, params) {
 
@@ -35,24 +31,12 @@ class LoginWorker @AssistedInject constructor(
 				)
 			}
 		) {
-			val loginBody = inputData.getString(EXTRA_REQUEST_BODY)!!.fromJson(LoginBody::class.java)
-			val response = authRepository.login(loginBody)
+			val response = authRepository.verifyOtp(
+				inputData.getString(EXTRA_EMAIL)!!,
+				inputData.getString(EXTRA_REQUEST_BODY)!!.fromJson(VerifyOtpBody::class.java)
+			)
 
 			if (response.isSuccessful) {
-				val jwt = JWT(response.body()!!.token)
-				userCredentialRepository.apply {
-					val id = jwt.claims["id"]!!.asString()!!
-					val name = jwt.claims["name"]!!.asString()!!
-					val email = jwt.claims["email"]!!.asString()!!
-
-					setId(id)
-					setName(name)
-					setEmail(email)
-					setToken(response.body()!!.token)
-
-					Timber.i("Login success: id = $id, name = $name, email = $email")
-				}
-
 				Result.success()
 			} else {
 				val errMsg = response.errorBody().let {
@@ -73,5 +57,6 @@ class LoginWorker @AssistedInject constructor(
 		const val EXTRA_ERROR_MESSAGE = "errMsg"
 
 		const val EXTRA_REQUEST_BODY = "requestBody"
+		const val EXTRA_EMAIL = "email"
 	}
 }

@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavOptionsBuilder
 import com.ufovanguard.planetpulseacademy.R
 import com.ufovanguard.planetpulseacademy.data.Destination
 import com.ufovanguard.planetpulseacademy.data.Destinations
@@ -53,7 +54,7 @@ private fun OnboardingScreenPreview() {
 	PlanetPulseAcademyTheme {
 		OnboardingScreenContent(
 			state = OnboardingState(),
-			navigateTo = {},
+			navigateTo = { _, _ ->},
 			modifier = Modifier
 				.fillMaxSize()
 				.background(MaterialTheme.colorScheme.background)
@@ -77,7 +78,7 @@ private fun OnboardingPagePreview() {
 @Composable
 fun OnboardingScreen(
 	viewModel: OnboardingViewModel,
-	navigateTo: (Destination) -> Unit
+	navigateTo: (Destination, builder: (NavOptionsBuilder.() -> Unit)?) -> Unit
 ) {
 
 	val state by viewModel.state.collectAsStateWithLifecycle()
@@ -106,7 +107,7 @@ fun OnboardingScreen(
 private fun OnboardingScreenContent(
 	state: OnboardingState,
 	modifier: Modifier = Modifier,
-	navigateTo: (Destination) -> Unit
+	navigateTo: (Destination, builder: (NavOptionsBuilder.() -> Unit)?) -> Unit
 ) {
 
 	val coroutineScope = rememberCoroutineScope()
@@ -232,7 +233,11 @@ private fun OnboardingScreenContent(
 				shape = MaterialTheme.shapes.medium,
 				onClick = {
 					if (pagerState.currentPage == pagerState.pageCount - 1) {
-						navigateTo(Destinations.Auth.route)
+						navigateTo(Destinations.Auth.route) {
+							popUpTo(Destinations.Onboarding.route.route) {
+								inclusive = true
+							}
+						}
 					} else {
 						coroutineScope.launch {
 							pagerState.animateScrollToPage(

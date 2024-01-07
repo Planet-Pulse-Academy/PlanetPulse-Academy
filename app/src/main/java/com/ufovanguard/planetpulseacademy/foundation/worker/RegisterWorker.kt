@@ -6,9 +6,9 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import com.google.gson.Gson
-import com.ufovanguard.planetpulseacademy.data.datasource.remote.AuthService
 import com.ufovanguard.planetpulseacademy.data.model.remote.body.RegisterBody
 import com.ufovanguard.planetpulseacademy.data.model.remote.response.ErrorResponse
+import com.ufovanguard.planetpulseacademy.data.repository.AuthRepository
 import com.ufovanguard.planetpulseacademy.foundation.extension.fromJson
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -17,7 +17,7 @@ import dagger.assisted.AssistedInject
 class RegisterWorker @AssistedInject constructor(
 	@Assisted private val context: Context,
 	@Assisted params: WorkerParameters,
-	private val authService: AuthService
+	private val authRepository: AuthRepository
 ): CoroutineWorker(context, params) {
 
 	override suspend fun doWork(): Result {
@@ -31,8 +31,9 @@ class RegisterWorker @AssistedInject constructor(
 				)
 			}
 		) {
-			val requestBody = inputData.getString(EXTRA_REQUEST_BODY)!!.fromJson(RegisterBody::class.java).toRequestBody()
-			val response = authService.register(requestBody)
+			val response = authRepository.register(
+				inputData.getString(EXTRA_REQUEST_BODY)!!.fromJson(RegisterBody::class.java)
+			)
 
 			if (response.isSuccessful) {
 				Result.success()
