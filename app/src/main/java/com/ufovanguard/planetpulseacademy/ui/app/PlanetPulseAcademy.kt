@@ -17,10 +17,14 @@ import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.navigation.material.BottomSheetNavigator
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.google.accompanist.navigation.material.ModalBottomSheetLayout
+import com.ufovanguard.planetpulseacademy.data.Destination
 import com.ufovanguard.planetpulseacademy.data.Destinations
 import com.ufovanguard.planetpulseacademy.ui.home.HomeScreen
+import com.ufovanguard.planetpulseacademy.ui.lesson.LessonScreen
 import com.ufovanguard.planetpulseacademy.ui.login.LoginScreen
 import com.ufovanguard.planetpulseacademy.ui.onboarding.OnboardingScreen
+import com.ufovanguard.planetpulseacademy.ui.profile.ProfileScreen
+import com.ufovanguard.planetpulseacademy.ui.quiz.QuizScreen
 import com.ufovanguard.planetpulseacademy.ui.register.RegisterScreen
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalMaterialNavigationApi::class)
@@ -41,6 +45,8 @@ fun PlanetPulseAcademy(
 	}
 
 	val navController = rememberNavController(bottomSheetNavigator)
+
+	val navigateTo: (Destination) -> Unit = { navController.navigate(it.route) }
 
 	ModalBottomSheetLayout(
 		bottomSheetNavigator = bottomSheetNavigator,
@@ -65,9 +71,7 @@ fun PlanetPulseAcademy(
 					composable(Destinations.Onboarding.onboarding.route) { backEntry ->
 						OnboardingScreen(
 							viewModel = hiltViewModel(backEntry),
-							navigateTo = { dest ->
-								navController.navigate(dest.route)
-							}
+							navigateTo = navigateTo
 						)
 					}
 				}
@@ -79,18 +83,14 @@ fun PlanetPulseAcademy(
 					composable(Destinations.Auth.register.route) { backEntry ->
 						RegisterScreen(
 							viewModel = hiltViewModel(backEntry),
-							navigateTo = { dest ->
-								navController.navigate(dest.route)
-							}
+							navigateTo = navigateTo
 						)
 					}
 
 					composable(Destinations.Auth.login.route) { backEntry ->
 						LoginScreen(
 							viewModel = hiltViewModel(backEntry),
-							navigateTo = { dest ->
-								navController.navigate(dest.route)
-							}
+							navigateTo = navigateTo
 						)
 					}
 				}
@@ -102,18 +102,29 @@ fun PlanetPulseAcademy(
 					composable(Destinations.Main.home.route) { backEntry ->
 						HomeScreen(
 							viewModel = hiltViewModel(backEntry),
-							navigateTo = { dest ->
-								navController.navigate(dest.route)
-							}
+							navigateTo = navigateTo
+						)
+					}
+
+					composable(Destinations.Main.profile.route) { backEntry ->
+						ProfileScreen(
+							viewModel = hiltViewModel(backEntry),
+							onNavigateUp = navController::popBackStack
+						)
+					}
+
+					composable(Destinations.Main.lesson.route) { backEntry ->
+						LessonScreen(
+							viewModel = hiltViewModel(backEntry),
+							onNavigateUp = navController::popBackStack,
+							navigateTo = navigateTo
 						)
 					}
 
 					composable(Destinations.Main.quiz.route) { backEntry ->
-						HomeScreen(
+						QuizScreen(
 							viewModel = hiltViewModel(backEntry),
-							navigateTo = { dest ->
-								navController.navigate(dest.route)
-							}
+							onNavigateUp = navController::popBackStack,
 						)
 					}
 				}

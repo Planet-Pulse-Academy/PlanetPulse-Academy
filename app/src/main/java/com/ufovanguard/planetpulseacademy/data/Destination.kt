@@ -12,6 +12,8 @@ import androidx.navigation.NavDeepLink
 object DestinationRoute {
 	const val ONBOARDING = "onboarding"
 	const val REGISTER = "register"
+	const val PROFILE = "profile"
+	const val LESSON = "lesson"
 	const val LOGIN = "login"
 	const val QUIZ = "quiz"
 	const val HOME = "home"
@@ -127,6 +129,14 @@ object Destinations {
 
 		val quiz = Destination(
 			route = DestinationRoute.QUIZ
+		)
+
+		val lesson = Destination(
+			route = DestinationRoute.LESSON
+		)
+
+		val profile = Destination(
+			route = DestinationRoute.PROFILE
 		)
 	}
 
