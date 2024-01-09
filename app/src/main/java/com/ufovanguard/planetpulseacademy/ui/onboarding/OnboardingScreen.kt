@@ -19,7 +19,7 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
-import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -28,10 +28,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -45,6 +45,7 @@ import com.ufovanguard.planetpulseacademy.data.Destination
 import com.ufovanguard.planetpulseacademy.data.Destinations
 import com.ufovanguard.planetpulseacademy.foundation.base.ui.BaseScreenWrapper
 import com.ufovanguard.planetpulseacademy.foundation.extension.slidingLineTransition
+import com.ufovanguard.planetpulseacademy.foundation.theme.PPATheme
 import com.ufovanguard.planetpulseacademy.foundation.theme.PlanetPulseAcademyTheme
 import kotlinx.coroutines.launch
 
@@ -52,13 +53,20 @@ import kotlinx.coroutines.launch
 @Composable
 private fun OnboardingScreenPreview() {
 	PlanetPulseAcademyTheme {
-		OnboardingScreenContent(
-			state = OnboardingState(),
-			navigateTo = { _, _ ->},
+		Box(
+			contentAlignment = Alignment.Center,
 			modifier = Modifier
 				.fillMaxSize()
-				.background(MaterialTheme.colorScheme.background)
-		)
+				.background(PPATheme.colorScheme.background)
+		) {
+			OnboardingScreenContent(
+				state = OnboardingState(),
+				navigateTo = { _, _ ->},
+				modifier = Modifier
+					.fillMaxWidth(0.82f)
+					.fillMaxHeight()
+			)
+		}
 	}
 }
 
@@ -70,7 +78,7 @@ private fun OnboardingPagePreview() {
 			title = "Lorem pisum dolor sit amet",
 			imageRes = R.drawable.ic_app,
 			modifier = Modifier
-				.background(MaterialTheme.colorScheme.background)
+				.background(PPATheme.colorScheme.background)
 		)
 	}
 }
@@ -88,6 +96,7 @@ fun OnboardingScreen(
 			contentAlignment = Alignment.Center,
 			modifier = Modifier
 				.fillMaxSize()
+				.background(PPATheme.colorScheme.background)
 		) {
 			OnboardingScreenContent(
 				state = state,
@@ -203,7 +212,7 @@ private fun OnboardingScreenContent(
 							)
 							.background(
 								shape = CircleShape,
-								color = Color.Gray.copy(0.32f)
+								color = PPATheme.colorScheme.onBackground.copy(0.5f)
 							)
 					)
 				}
@@ -218,7 +227,7 @@ private fun OnboardingScreenContent(
 					)
 					.background(
 						shape = CircleShape,
-						color = Color.Gray
+						color = PPATheme.colorScheme.onBackground
 					)
 			)
 		}
@@ -231,6 +240,9 @@ private fun OnboardingScreenContent(
 		) {
 			Button(
 				shape = MaterialTheme.shapes.medium,
+				colors = ButtonDefaults.buttonColors(
+					containerColor = PPATheme.colorScheme.button
+				),
 				onClick = {
 					if (pagerState.currentPage == pagerState.pageCount - 1) {
 						navigateTo(Destinations.Auth.route) {
@@ -250,21 +262,46 @@ private fun OnboardingScreenContent(
 				modifier = Modifier
 					.fillMaxWidth()
 			) {
-				Text(if (pagerState.currentPage == pagerState.pageCount - 1) "Login" else "Next")
+				Text(
+					text = stringResource(
+						id = if (pagerState.currentPage == pagerState.pageCount - 1) R.string.sign_in
+						else R.string.next
+					)
+				)
 			}
 
 			TextButton(
-				enabled = pagerState.currentPage < pagerState.pageCount - 1,
 				shape = MaterialTheme.shapes.medium,
+				colors = ButtonDefaults.textButtonColors(
+					contentColor = PPATheme.colorScheme.onBackground
+				),
 				onClick = {
-					coroutineScope.launch {
-						pagerState.animateScrollToPage(pagerState.pageCount - 1)
+					// if current page >= page count - 1, navigate to register screen
+					// otherwise skip to last page
+					if (pagerState.currentPage >= pagerState.pageCount - 1) {
+						// Add login screen to back stack before navigate to register screen
+						navigateTo(Destinations.Auth.login) {
+							popUpTo(Destinations.Onboarding.onboarding.route) {
+								inclusive = true
+							}
+						}
+
+						navigateTo(Destinations.Auth.register, null)
+					} else {
+						coroutineScope.launch {
+							pagerState.animateScrollToPage(pagerState.pageCount - 1)
+						}
 					}
 				},
 				modifier = Modifier
 					.fillMaxWidth()
 			) {
-				if (pagerState.currentPage < pagerState.pageCount - 1) Text("Skip")
+				Text(
+					text = stringResource(
+						id = if (pagerState.currentPage < pagerState.pageCount - 1) R.string.skip
+						else R.string.sign_up
+					)
+				)
 			}
 		}
 	}
@@ -295,7 +332,7 @@ private fun OnboardingPage(
 			textAlign = TextAlign.Center,
 			style = MaterialTheme.typography.titleLarge.copy(
 				fontWeight = FontWeight.Bold,
-				color = LocalContentColor.current
+				color = PPATheme.colorScheme.onBackground
 			)
 		)
 	}

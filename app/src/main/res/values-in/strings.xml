@@ -34,5 +34,8 @@
     <string name="password_must_be_the_same">Kata sandi harus sama</string>
     <string name="password_reset_successful">Atur ulang kata sandi berhasil</string>
     <string name="otp_cannot_be_empty">OTP tidak boleh kosong</string>
+    <string name="hi_name">Halo %1$s</string>
+    <string name="next">Lanjut</string>
+    <string name="skip">Lewati</string>
 
 </resources>

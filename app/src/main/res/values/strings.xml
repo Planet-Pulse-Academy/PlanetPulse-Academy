@@ -35,4 +35,7 @@
     <string name="password_must_be_the_same">Password must be the same</string>
     <string name="password_reset_successful">Password reset successful</string>
     <string name="otp_cannot_be_empty">OTP cannot be empty</string>
+    <string name="hi_name">Hi %1$s</string>
+    <string name="next">Next</string>
+    <string name="skip">Skip</string>
 </resources>
