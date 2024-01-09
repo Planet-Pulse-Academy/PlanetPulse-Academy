@@ -40,20 +40,25 @@ class LoginWorker @AssistedInject constructor(
 
 			if (response.isSuccessful) {
 				val jwt = JWT(response.body()!!.token)
-				userCredentialRepository.apply {
-					val id = jwt.claims["id"]!!.asString()!!
-					val name = jwt.claims["name"]!!.asString()!!
-					val email = jwt.claims["email"]!!.asString()!!
+				val id = jwt.claims["id"]!!.asString()!!
+				val name = jwt.claims["name"]!!.asString()!!
+				val email = jwt.claims["email"]!!.asString()!!
+				val token = response.body()!!.token
 
+				userCredentialRepository.apply {
 					setId(id)
 					setName(name)
 					setEmail(email)
-					setToken(response.body()!!.token)
+					setToken(token)
 
 					Timber.i("Login success: id = $id, name = $name, email = $email")
 				}
 
-				Result.success()
+				Result.success(
+					workDataOf(
+						EXTRA_TOKEN to token
+					)
+				)
 			} else {
 				val errMsg = response.errorBody().let {
 					if (it != null) Gson().fromJson(it.charStream(), ErrorResponse::class.java).message
@@ -73,5 +78,6 @@ class LoginWorker @AssistedInject constructor(
 		const val EXTRA_ERROR_MESSAGE = "errMsg"
 
 		const val EXTRA_REQUEST_BODY = "requestBody"
+		const val EXTRA_TOKEN = "token"
 	}
 }

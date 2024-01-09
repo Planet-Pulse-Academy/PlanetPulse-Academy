@@ -2,6 +2,9 @@ package com.ufovanguard.planetpulseacademy.ui.login
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import androidx.work.Constraints
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.ufovanguard.planetpulseacademy.data.model.remote.body.LoginBody
@@ -10,6 +13,7 @@ import com.ufovanguard.planetpulseacademy.foundation.base.ui.BaseViewModel
 import com.ufovanguard.planetpulseacademy.foundation.common.validator.PasswordValidator
 import com.ufovanguard.planetpulseacademy.foundation.common.validator.UsernameValidator
 import com.ufovanguard.planetpulseacademy.foundation.worker.LoginWorker
+import com.ufovanguard.planetpulseacademy.foundation.worker.ProfileWorker
 import com.ufovanguard.planetpulseacademy.foundation.worker.Workers
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -37,9 +41,34 @@ class LoginViewModel @Inject constructor(
 	private val _currentLoginWorkId = Channel<UUID?>()
 	private val currentLoginWorkId: Flow<UUID?> = _currentLoginWorkId.receiveAsFlow()
 
+	private val _currentGetProfileWorkId = Channel<UUID?>()
+	private val currentGetProfileWorkId: Flow<UUID?> = _currentGetProfileWorkId.receiveAsFlow()
+
 	init {
 	    viewModelScope.launch {
 			currentLoginWorkId.filterNotNull().flatMapLatest { uuid ->
+				workManager.getWorkInfoByIdFlow(uuid)
+			}.collectLatest { workInfo ->
+				updateState {
+					when (workInfo.state) {
+						WorkInfo.State.FAILED -> {
+							sendEvent(
+								LoginUiEvent.LoginFailed(
+									workInfo.outputData.getString(LoginWorker.EXTRA_ERROR_MESSAGE)
+										?: "Unknown error"
+								)
+							)
+
+							copy(isLoading = false)
+						}
+						else -> this
+					}
+				}
+			}
+		}
+
+		viewModelScope.launch {
+			currentGetProfileWorkId.filterNotNull().flatMapLatest { uuid ->
 				workManager.getWorkInfoByIdFlow(uuid)
 			}.collectLatest { workInfo ->
 				if (workInfo.state == WorkInfo.State.SUCCEEDED) {
@@ -56,7 +85,7 @@ class LoginViewModel @Inject constructor(
 						WorkInfo.State.FAILED -> {
 							sendEvent(
 								LoginUiEvent.LoginFailed(
-									workInfo.outputData.getString(LoginWorker.EXTRA_ERROR_MESSAGE)
+									workInfo.outputData.getString(ProfileWorker.EXTRA_ERROR_MESSAGE)
 										?: "Unknown error"
 								)
 							)
@@ -118,6 +147,28 @@ class LoginViewModel @Inject constructor(
 					isLoading = true
 				)
 			}
+
+			workManager.beginWith(
+				Workers.loginWorker(
+					LoginBody(
+						username = username,
+						password = password
+					)
+				).also {
+					_currentLoginWorkId.send(it.id)
+				}
+			).then(
+				OneTimeWorkRequestBuilder<ProfileWorker>()
+					.setConstraints(
+						Constraints(
+							requiredNetworkType = NetworkType.CONNECTED
+						)
+					)
+					.build()
+					.also {
+						_currentGetProfileWorkId.send(it.id)
+					}
+			).enqueue()
 
 			workManager.enqueue(
 				Workers.loginWorker(

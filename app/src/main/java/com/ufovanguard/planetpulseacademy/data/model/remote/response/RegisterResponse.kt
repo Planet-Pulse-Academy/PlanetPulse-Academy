@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 
 data class RegisterResponse(
 	@SerializedName("status")
-	val status: String,
+	override val status: String,
 	@SerializedName("message")
-	val message: String
-)
+	override val message: String
+): CommonSingleResponse

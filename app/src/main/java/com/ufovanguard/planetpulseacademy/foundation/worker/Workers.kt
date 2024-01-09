@@ -91,4 +91,19 @@ object Workers {
 			.build()
 	}
 
+	fun profile(token: String): OneTimeWorkRequest {
+		return OneTimeWorkRequestBuilder<ProfileWorker>()
+			.setConstraints(
+				Constraints(
+					requiredNetworkType = NetworkType.CONNECTED
+				)
+			)
+			.setInputData(
+				workDataOf(
+					ProfileWorker.EXTRA_TOKEN to token
+				)
+			)
+			.build()
+	}
+
 }

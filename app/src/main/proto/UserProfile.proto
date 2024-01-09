@@ -1,0 +1,20 @@
+syntax = "proto3";
+option java_package = "com.ufovanguard.planetpulseacademy";
+option java_generate_equals_and_hash = true;
+option java_multiple_files = true;
+
+message ProtoUserProfile {
+  string id = 1;
+  string name = 2;
+  string email = 3;
+  string username = 4;
+  bool isVerified = 5;
+  string defaultColor = 6;
+  optional string photoProfile = 7;
+  optional string publicId = 8;
+  string status = 9;
+  string createdAt = 10;
+  string updatedAt = 11;
+//  string academy = 12;
+  int32 __v = 12;
+}

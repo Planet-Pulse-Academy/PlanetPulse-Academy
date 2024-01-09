@@ -6,11 +6,14 @@ import androidx.datastore.core.DataStoreFactory
 import androidx.datastore.dataStoreFile
 import com.ufovanguard.planetpulseacademy.ProtoUserCredential
 import com.ufovanguard.planetpulseacademy.ProtoUserPreference
+import com.ufovanguard.planetpulseacademy.ProtoUserProfile
 import com.ufovanguard.planetpulseacademy.data.Constant
 import com.ufovanguard.planetpulseacademy.data.datastore.UserCredentialSerializer
 import com.ufovanguard.planetpulseacademy.data.datastore.UserPreferenceSerializer
+import com.ufovanguard.planetpulseacademy.data.datastore.UserProfileSerializer
 import com.ufovanguard.planetpulseacademy.data.repository.impl.UserCredentialRepositoryImpl
 import com.ufovanguard.planetpulseacademy.data.repository.impl.UserPreferenceRepositoryImpl
+import com.ufovanguard.planetpulseacademy.data.repository.impl.UserProfileRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -40,6 +43,16 @@ class DatastoreModule {
 		serializer = UserPreferenceSerializer,
 		corruptionHandler = UserPreferenceRepositoryImpl.corruptionHandler,
 		produceFile = { context.dataStoreFile(Constant.DATASTORE_USER_PREFERENCE) }
+	)
+
+	@Provides
+	@Singleton
+	fun provideUserProfileDataStore(
+		@ApplicationContext context: Context,
+	): DataStore<ProtoUserProfile> = DataStoreFactory.create(
+		serializer = UserProfileSerializer,
+		corruptionHandler = UserProfileRepositoryImpl.corruptionHandler,
+		produceFile = { context.dataStoreFile(Constant.DATASTORE_USER_PROFILE) }
 	)
 
 }
