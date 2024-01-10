@@ -87,6 +87,7 @@ fun PlanetPulseAcademyTheme(
 		primaryContainer = ppa_theme_light_primaryContainer,
 		onPrimary = ppa_theme_light_onPrimary,
 		onPrimaryContainer = ppa_theme_light_onPrimaryContainer,
+		secondary = ppa_theme_light_secondary,
 		background = ppa_theme_light_background,
 		onBackground = ppa_theme_light_onBackground,
 		inverseOnBackground = ppa_theme_light_inverseOnBackground,
