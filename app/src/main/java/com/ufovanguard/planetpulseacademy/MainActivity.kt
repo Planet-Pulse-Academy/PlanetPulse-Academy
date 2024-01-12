@@ -48,14 +48,17 @@ class MainActivity: ComponentActivity() {
 			statusBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT)
 		)
 
-		super.onCreate(savedInstanceState)
-
 		installSplashScreen().setKeepOnScreenCondition {
 			viewModel.state.value.userCredential == null ||
-			viewModel.state.value.userPreference == null
+				viewModel.state.value.userPreference == null
 		}
 
+		super.onCreate(savedInstanceState)
+
 		WindowCompat.setDecorFitsSystemWindows(window, false)
+
+		// Hide action bar in android 12 above
+		actionBar?.hide()
 
 		setContent {
 			PlanetPulseAcademyTheme {
