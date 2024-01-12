@@ -2,7 +2,9 @@ package com.ufovanguard.planetpulseacademy.foundation.base.ui
 
 import android.os.Parcelable
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult.ActionPerformed
@@ -22,12 +24,19 @@ import kotlinx.coroutines.withContext
 /**
  * Kerangka dasar untuk screen
  *
+ * @param contentWindowInsets window insets to be passed to [content] slot via [PaddingValues]
+ * params. Scaffold will take the insets into account from the top/bottom only if the [topBar]/
+ * [bottomBar] are not present, as the scaffold expect [topBar]/[bottomBar] to handle insets
+ * instead. Any insets consumed by other insets padding modifiers or [consumeWindowInsets] on a
+ * parent layout will be excluded from [contentWindowInsets].
+ *
  * @author kafri8889
  */
 @Composable
 fun <STATE: Parcelable> BaseScreenWrapper(
 	viewModel: BaseViewModel<STATE>,
 	modifier: Modifier = Modifier,
+	contentWindowInsets: WindowInsets = ScaffoldDefaults.contentWindowInsets,
 	onEvent: (UiEvent) -> Unit = {},
 	topBar: @Composable () -> Unit = {},
 	bottomBar: @Composable () -> Unit = {},
@@ -70,6 +79,7 @@ fun <STATE: Parcelable> BaseScreenWrapper(
 	Scaffold(
 		topBar = topBar,
 		bottomBar = bottomBar,
+		contentWindowInsets = contentWindowInsets,
 		floatingActionButton = floatingActionButton,
 		modifier = modifier,
 		snackbarHost = {

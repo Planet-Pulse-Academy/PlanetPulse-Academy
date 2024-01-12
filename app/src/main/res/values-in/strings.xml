@@ -37,5 +37,7 @@
     <string name="hi_name">Halo %1$s</string>
     <string name="next">Lanjut</string>
     <string name="skip">Lewati</string>
+    <string name="academy">Akademi</string>
+    <string name="profile">Profil</string>
 
 </resources>

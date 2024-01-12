@@ -1,7 +1,10 @@
 package com.ufovanguard.planetpulseacademy.data.model
 
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
 data class UserProfile(
 	@SerializedName("_id")
 	val id: String,
@@ -29,4 +32,4 @@ data class UserProfile(
 	val __v: Int,
 //	@SerializedName("academy")
 	//	val academy: List<>
-)
+): Parcelable

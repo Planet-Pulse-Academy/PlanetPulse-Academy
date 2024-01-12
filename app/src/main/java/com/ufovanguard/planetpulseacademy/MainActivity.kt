@@ -1,5 +1,6 @@
 package com.ufovanguard.planetpulseacademy
 
+import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -42,20 +43,27 @@ class MainActivity: ComponentActivity() {
 	}
 
 	override fun onCreate(savedInstanceState: Bundle?) {
+
+		val isDarkTheme = resources.configuration.uiMode.and(Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
+
 		// Set system bar and navigation bar color to transparent
 		enableEdgeToEdge(
-			navigationBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT),
-			statusBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT)
+			statusBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT),
+			navigationBarStyle = if (isDarkTheme) SystemBarStyle.light(Color.TRANSPARENT, Color.TRANSPARENT)
+			else SystemBarStyle.dark(Color.TRANSPARENT)
 		)
-
-		super.onCreate(savedInstanceState)
 
 		installSplashScreen().setKeepOnScreenCondition {
 			viewModel.state.value.userCredential == null ||
-			viewModel.state.value.userPreference == null
+				viewModel.state.value.userPreference == null
 		}
 
+		super.onCreate(savedInstanceState)
+
 		WindowCompat.setDecorFitsSystemWindows(window, false)
+
+		// Hide action bar in android 12 above
+		actionBar?.hide()
 
 		setContent {
 			PlanetPulseAcademyTheme {
