@@ -1,5 +1,6 @@
 package com.ufovanguard.planetpulseacademy.ui.profile
 
+import android.graphics.drawable.ColorDrawable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -27,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -36,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+import com.bumptech.glide.integration.compose.placeholder
 import com.ufovanguard.planetpulseacademy.R
 import com.ufovanguard.planetpulseacademy.foundation.base.ui.BaseScreenWrapper
 import com.ufovanguard.planetpulseacademy.foundation.theme.PPATheme
@@ -135,6 +138,7 @@ private fun ProfileScreenContent(
 					model = "https://pbs.twimg.com/media/F0Wrbt9X0AMwjqO?format=jpg&name=large",
 					contentDescription = null,
 					contentScale = ContentScale.Crop,
+					loading = placeholder(ColorDrawable(Color.LightGray.toArgb())),
 					modifier = Modifier
 						.size(96.dp)
 						.clip(CircleShape)
