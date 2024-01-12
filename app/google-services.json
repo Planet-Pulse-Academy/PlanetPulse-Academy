@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "517288716362",
+    "project_id": "planetpulse-b2400",
+    "storage_bucket": "planetpulse-b2400.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:517288716362:android:5333b99493ebe18ea39eb3",
+        "android_client_info": {
+          "package_name": "com.ufovanguard.planetpulseacademy"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "517288716362-9prem37fc8v6ilou00t107a3c155kujv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCdFXDp57sr3H6mquDSkntgR_F_-C1y8hg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "517288716362-9prem37fc8v6ilou00t107a3c155kujv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

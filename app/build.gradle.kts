@@ -11,6 +11,7 @@ plugins {
     id("com.squareup.wire")
     id("com.google.devtools.ksp")
     id("org.jetbrains.kotlin.plugin.serialization")
+	id("com.google.gms.google-services")
 }
 
 android {
@@ -133,12 +134,6 @@ dependencies {
     implementation("androidx.compose.ui:ui-util:${extra["compose_version"]}")
     implementation("androidx.compose.animation:animation:${extra["compose_version"]}")
 
-    // Compose Android
-    implementation("androidx.compose.ui:ui-android:${extra["compose_version"]}")
-    implementation("androidx.compose.ui:ui-tooling-preview-android:${extra["compose_version"]}")
-	implementation("androidx.compose.ui:ui-util-android:${rootProject.extra["compose_version"]}")
-    implementation("androidx.compose.animation:animation-android:${extra["compose_version"]}")
-
     // Constraint layout
     implementation("androidx.constraintlayout:constraintlayout-compose:1.1.0-alpha13")
 
@@ -190,8 +185,9 @@ dependencies {
 	implementation("com.squareup.retrofit2:converter-gson:2.9.0")
 	implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
 
-    // Media
-    implementation("androidx.media3:media3-exoplayer:1.2.0")
+    // Firebase
+	implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
+	implementation("com.google.firebase:firebase-analytics")
 
 	//Credentials support
 	implementation("androidx.credentials:credentials:1.2.0")
