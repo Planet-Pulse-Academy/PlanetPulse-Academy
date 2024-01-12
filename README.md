@@ -17,6 +17,18 @@ Dengan menekankan interaktivitas, pemantauan progres, struktur konten yang teror
 - **Pembelajaran Berbasis Video**: Kami memberikan berbagai video tutorial yang mencakup berbagai topik. Kamu dapat belajar kapan saja, di mana saja, dan sesuai dengan kecepatan Anda sendiri.
 - **Quiz**: Setelah menyelesaikan setiap pembelajaran, Kamu dapat menguji pemahaman dengan quiz kami. Quiz ini dirancang untuk memperkuat konsep yang telah dipelajari.
 
+## Technology Used
+- Android (Jetpack Compose)
+- Firebase
+
+## Preview
+<p float="left">
+  <img src="https://github.com/Planet-Pulse-Academy/resources/blob/main/login.jpg" height="600" width="270" >
+  <img src="https://github.com/Planet-Pulse-Academy/resources/blob/main/register.jpg" height="600" width="270" >
+  <img src="https://github.com/Planet-Pulse-Academy/resources/blob/main/forgot_password.jpg" height="600" width="270" >
+  <img src="https://github.com/Planet-Pulse-Academy/resources/blob/main/home.jpg" height="600" width="270" >
+</p>
+
 ## Team
 Ufo Vanguard Team (HF24-47)
 
