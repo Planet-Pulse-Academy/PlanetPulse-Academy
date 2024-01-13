@@ -15,8 +15,6 @@ data class ForgotPasswordState(
 	val emailErrMsg: String? = null,
 	val passwordErrMsg: String? = null,
 	val passwordConfirmErrMsg: String? = null,
-	val isSendOtpButtonEnabled: Boolean = true,
-	val isOtpVerified: Boolean = false,
 	val showPassword: Boolean = false,
 	val isLoading: Boolean = false,
 	/**

@@ -60,8 +60,7 @@ class ForgotPasswordViewModel @Inject constructor(
 
 							copy(
 								isLoading = false,
-								isEmailMode = false,
-								isSendOtpButtonEnabled = false
+								isEmailMode = false
 							)
 						}
 						WorkInfo.State.FAILED -> {
@@ -94,11 +93,6 @@ class ForgotPasswordViewModel @Inject constructor(
 			}.collectLatest { workInfo ->
 				updateState {
 					when (workInfo.state) {
-						WorkInfo.State.SUCCEEDED -> {
-							copy(
-								isOtpVerified = true
-							)
-						}
 						WorkInfo.State.FAILED -> {
 							sendEvent(
 								ForgotPasswordUiEvent.FailedToSendOtp(
@@ -188,14 +182,6 @@ class ForgotPasswordViewModel @Inject constructor(
 		}
 	}
 
-	fun setOtpButtonEnabled(enabled: Boolean) {
-		updateState {
-			copy(
-				isSendOtpButtonEnabled = enabled
-			)
-		}
-	}
-
 	fun setIsEmailMode(isEmailMode: Boolean) {
 		updateState {
 			copy(
@@ -237,7 +223,7 @@ class ForgotPasswordViewModel @Inject constructor(
 		}
 	}
 
-	fun requestOtp() {
+	private fun requestOtp() {
 		val email = state.value.email.trim()
 
 		viewModelScope.launch {
