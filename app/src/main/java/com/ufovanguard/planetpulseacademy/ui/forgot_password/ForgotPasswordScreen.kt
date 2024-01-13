@@ -1,5 +1,6 @@
 package com.ufovanguard.planetpulseacademy.ui.forgot_password
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
@@ -98,6 +99,10 @@ fun ForgotPasswordScreen(
 ) {
 
 	val state by viewModel.state.collectAsStateWithLifecycle()
+
+	BackHandler(enabled = !state.isEmailMode) {
+		viewModel.setIsEmailMode(true)
+	}
 
 	BaseScreenWrapper(
 		viewModel = viewModel,
@@ -249,6 +254,7 @@ private fun ForgotPasswordScreenContent(
 			emailErrMsg = state.emailErrMsg,
 			passwordErrMsg = state.passwordErrMsg,
 			passwordConfirmErrMsg = state.passwordConfirmErrMsg,
+			isEmailMode = state.isEmailMode,
 			isSendOtpButtonEnabled = state.isSendOtpButtonEnabled,
 			onPasswordVisibilityChanged = onPasswordVisibilityChanged,
 			onOtpChanged = onOtpChanged,
@@ -287,6 +293,7 @@ private fun MiddleContent(
 	password: String,
 	passwordConfirm: String,
 	showPassword: Boolean,
+	isEmailMode: Boolean,
 	isSendOtpButtonEnabled: Boolean,
 	modifier: Modifier = Modifier,
 	emailErrMsg: String? = null,
@@ -326,47 +333,49 @@ private fun MiddleContent(
 
 		Spacer(modifier = Modifier.height(8.dp))
 
-		EmailTextField(
-			email = email,
-			emailErrMsg = emailErrMsg,
-			onEmailChanged = onEmailChanged,
-			modifier = Modifier
-				.fillMaxWidth()
-				.focusRequester(emailFocusRequester)
-		)
+		if (isEmailMode) {
+			EmailTextField(
+				email = email,
+				emailErrMsg = emailErrMsg,
+				onEmailChanged = onEmailChanged,
+				modifier = Modifier
+					.fillMaxWidth()
+					.focusRequester(emailFocusRequester)
+			)
+		} else {
+			OtpTextField(
+				otp = otp,
+				isSendOtpButtonEnabled = isSendOtpButtonEnabled,
+				onOtpButtonEnabled = onOtpButtonEnabled,
+				onOtpChanged = onOtpChanged,
+				onSendOtp = onSendOtp,
+				modifier = Modifier
+					.fillMaxWidth()
+					.focusRequester(otpFocusRequester)
+			)
 
-		OtpTextField(
-			otp = otp,
-			isSendOtpButtonEnabled = isSendOtpButtonEnabled,
-			onOtpButtonEnabled = onOtpButtonEnabled,
-			onOtpChanged = onOtpChanged,
-			onSendOtp = onSendOtp,
-			modifier = Modifier
-				.fillMaxWidth()
-				.focusRequester(otpFocusRequester)
-		)
+			PasswordTextField(
+				password = password,
+				passwordErrMsg = passwordErrMsg,
+				showPassword = showPassword,
+				onPasswordVisibilityChanged = onPasswordVisibilityChanged,
+				onPasswordChanged = onPasswordChanged,
+				modifier = Modifier
+					.fillMaxWidth()
+					.focusRequester(passwordFocusRequester)
+			)
 
-		PasswordTextField(
-			password = password,
-			passwordErrMsg = passwordErrMsg,
-			showPassword = showPassword,
-			onPasswordVisibilityChanged = onPasswordVisibilityChanged,
-			onPasswordChanged = onPasswordChanged,
-			modifier = Modifier
-				.fillMaxWidth()
-				.focusRequester(passwordFocusRequester)
-		)
-
-		PasswordConfirmTextField(
-			passwordConfirm = passwordConfirm,
-			passwordConfirmErrMsg = passwordConfirmErrMsg,
-			showPassword = showPassword,
-			onPasswordVisibilityChanged = onPasswordVisibilityChanged,
-			onPasswordConfirmChanged = onPasswordConfirmChanged,
-			modifier = Modifier
-				.fillMaxWidth()
-				.focusRequester(passwordConfirmFocusRequester)
-		)
+			PasswordConfirmTextField(
+				passwordConfirm = passwordConfirm,
+				passwordConfirmErrMsg = passwordConfirmErrMsg,
+				showPassword = showPassword,
+				onPasswordVisibilityChanged = onPasswordVisibilityChanged,
+				onPasswordConfirmChanged = onPasswordConfirmChanged,
+				modifier = Modifier
+					.fillMaxWidth()
+					.focusRequester(passwordConfirmFocusRequester)
+			)
+		}
 
 		Button(
 			shape = MaterialTheme.shapes.medium,

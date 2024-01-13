@@ -45,7 +45,8 @@ class ForgotPasswordWorker @AssistedInject constructor(
 
 				Result.failure(
 					workDataOf(
-						EXTRA_ERROR_MESSAGE to errMsg
+						EXTRA_ERROR_MESSAGE to errMsg,
+						EXTRA_HTTP_STATUS_CODE to response.code()
 					)
 				)
 			}
@@ -54,8 +55,8 @@ class ForgotPasswordWorker @AssistedInject constructor(
 
 	companion object {
 		const val EXTRA_ERROR_MESSAGE = "errMsg"
-
 		const val EXTRA_REQUEST_BODY = "requestBody"
+		const val EXTRA_HTTP_STATUS_CODE = "httpStatusCode"
 	}
 
 }
