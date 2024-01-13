@@ -1,9 +1,7 @@
 package com.ufovanguard.planetpulseacademy.ui.forgot_password
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -33,7 +31,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -68,15 +65,13 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ufovanguard.planetpulseacademy.R
+import com.ufovanguard.planetpulseacademy.data.Constant
 import com.ufovanguard.planetpulseacademy.foundation.base.ui.BaseScreenWrapper
-import com.ufovanguard.planetpulseacademy.foundation.common.Timer
 import com.ufovanguard.planetpulseacademy.foundation.common.validator.ValidatorResult.Success.parse
 import com.ufovanguard.planetpulseacademy.foundation.extension.preventSelection
 import com.ufovanguard.planetpulseacademy.foundation.theme.PPATheme
 import com.ufovanguard.planetpulseacademy.foundation.theme.PlanetPulseAcademyTheme
-import com.ufovanguard.planetpulseacademy.foundation.uicomponent.AnimatedTextByChar
 import com.ufovanguard.planetpulseacademy.foundation.uicomponent.PPATextField
-import kotlin.time.Duration.Companion.seconds
 
 @Preview
 @Composable
@@ -99,6 +94,10 @@ fun ForgotPasswordScreen(
 
 	val state by viewModel.state.collectAsStateWithLifecycle()
 
+	BackHandler(enabled = !state.isEmailMode) {
+		viewModel.setIsEmailMode(true)
+	}
+
 	BaseScreenWrapper(
 		viewModel = viewModel,
 		contentWindowInsets = WindowInsets.statusBars,
@@ -118,10 +117,6 @@ fun ForgotPasswordScreen(
 			onPasswordConfirmChanged = viewModel::setPasswordConfirm,
 			onPasswordVisibilityChanged = viewModel::showPassword,
 			onConfirmClicked = viewModel::confirm,
-			onSendOtp = viewModel::requestOtp,
-			onOtpButtonEnabled = {
-				viewModel.setOtpButtonEnabled(true)
-			},
 			modifier = Modifier
 				.fillMaxSize()
 				.background(PPATheme.colorScheme.background)
@@ -141,9 +136,7 @@ private fun ForgotPasswordScreenContent(
 	onEmailChanged: (String) -> Unit = {},
 	onPasswordChanged: (String) -> Unit = {},
 	onPasswordConfirmChanged: (String) -> Unit = {},
-	onOtpButtonEnabled: () -> Unit = {},
 	onConfirmClicked: () -> Unit = {},
-	onSendOtp: () -> Unit = {},
 ) {
 
 	val focusManager = LocalFocusManager.current
@@ -249,15 +242,13 @@ private fun ForgotPasswordScreenContent(
 			emailErrMsg = state.emailErrMsg,
 			passwordErrMsg = state.passwordErrMsg,
 			passwordConfirmErrMsg = state.passwordConfirmErrMsg,
-			isSendOtpButtonEnabled = state.isSendOtpButtonEnabled,
+			isEmailMode = state.isEmailMode,
 			onPasswordVisibilityChanged = onPasswordVisibilityChanged,
 			onOtpChanged = onOtpChanged,
 			onEmailChanged = onEmailChanged,
 			onPasswordChanged = onPasswordChanged,
 			onPasswordConfirmChanged = onPasswordConfirmChanged,
-			onOtpButtonEnabled = onOtpButtonEnabled,
 			onConfirmClicked = onConfirmClicked,
-			onSendOtp = onSendOtp,
 			modifier = Modifier
 				.fillMaxWidth(0.86f)
 				.layoutId("middleContent")
@@ -287,7 +278,7 @@ private fun MiddleContent(
 	password: String,
 	passwordConfirm: String,
 	showPassword: Boolean,
-	isSendOtpButtonEnabled: Boolean,
+	isEmailMode: Boolean,
 	modifier: Modifier = Modifier,
 	emailErrMsg: String? = null,
 	passwordErrMsg: String? = null,
@@ -297,9 +288,7 @@ private fun MiddleContent(
 	onEmailChanged: (String) -> Unit = {},
 	onPasswordChanged: (String) -> Unit = {},
 	onPasswordConfirmChanged: (String) -> Unit = {},
-	onOtpButtonEnabled: () -> Unit,
 	onConfirmClicked: () -> Unit = {},
-	onSendOtp: () -> Unit = {},
 ) {
 
 	val (
@@ -326,47 +315,46 @@ private fun MiddleContent(
 
 		Spacer(modifier = Modifier.height(8.dp))
 
-		EmailTextField(
-			email = email,
-			emailErrMsg = emailErrMsg,
-			onEmailChanged = onEmailChanged,
-			modifier = Modifier
-				.fillMaxWidth()
-				.focusRequester(emailFocusRequester)
-		)
+		if (isEmailMode) {
+			EmailTextField(
+				email = email,
+				emailErrMsg = emailErrMsg,
+				onEmailChanged = onEmailChanged,
+				modifier = Modifier
+					.fillMaxWidth()
+					.focusRequester(emailFocusRequester)
+			)
+		} else {
+			OtpTextField(
+				otp = otp,
+				onOtpChanged = onOtpChanged,
+				modifier = Modifier
+					.fillMaxWidth()
+					.focusRequester(otpFocusRequester)
+			)
 
-		OtpTextField(
-			otp = otp,
-			isSendOtpButtonEnabled = isSendOtpButtonEnabled,
-			onOtpButtonEnabled = onOtpButtonEnabled,
-			onOtpChanged = onOtpChanged,
-			onSendOtp = onSendOtp,
-			modifier = Modifier
-				.fillMaxWidth()
-				.focusRequester(otpFocusRequester)
-		)
+			PasswordTextField(
+				password = password,
+				passwordErrMsg = passwordErrMsg,
+				showPassword = showPassword,
+				onPasswordVisibilityChanged = onPasswordVisibilityChanged,
+				onPasswordChanged = onPasswordChanged,
+				modifier = Modifier
+					.fillMaxWidth()
+					.focusRequester(passwordFocusRequester)
+			)
 
-		PasswordTextField(
-			password = password,
-			passwordErrMsg = passwordErrMsg,
-			showPassword = showPassword,
-			onPasswordVisibilityChanged = onPasswordVisibilityChanged,
-			onPasswordChanged = onPasswordChanged,
-			modifier = Modifier
-				.fillMaxWidth()
-				.focusRequester(passwordFocusRequester)
-		)
-
-		PasswordConfirmTextField(
-			passwordConfirm = passwordConfirm,
-			passwordConfirmErrMsg = passwordConfirmErrMsg,
-			showPassword = showPassword,
-			onPasswordVisibilityChanged = onPasswordVisibilityChanged,
-			onPasswordConfirmChanged = onPasswordConfirmChanged,
-			modifier = Modifier
-				.fillMaxWidth()
-				.focusRequester(passwordConfirmFocusRequester)
-		)
+			PasswordConfirmTextField(
+				passwordConfirm = passwordConfirm,
+				passwordConfirmErrMsg = passwordConfirmErrMsg,
+				showPassword = showPassword,
+				onPasswordVisibilityChanged = onPasswordVisibilityChanged,
+				onPasswordConfirmChanged = onPasswordConfirmChanged,
+				modifier = Modifier
+					.fillMaxWidth()
+					.focusRequester(passwordConfirmFocusRequester)
+			)
+		}
 
 		Button(
 			shape = MaterialTheme.shapes.medium,
@@ -441,20 +429,11 @@ private fun EmailTextField(
 @Composable
 private fun OtpTextField(
 	otp: String,
-	isSendOtpButtonEnabled: Boolean,
 	modifier: Modifier = Modifier,
-	onOtpButtonEnabled: () -> Unit,
 	onOtpChanged: (String) -> Unit,
-	onSendOtp: () -> Unit
 ) {
 
 	val focusManager = LocalFocusManager.current
-
-
-	val timer = remember { Timer() }
-
-	val isTimerRunning by timer.isRunning.collectAsStateWithLifecycle()
-	val remainingTimeInMilliseconds by timer.remainingTimeInMilliseconds.collectAsStateWithLifecycle()
 
 	val rememberedOnOtpChanged by rememberUpdatedState(onOtpChanged)
 
@@ -466,15 +445,10 @@ private fun OtpTextField(
 		)
 	}
 
-	LaunchedEffect(isSendOtpButtonEnabled) {
-		if (!isSendOtpButtonEnabled) timer.postDelayed(
-			duration = 60.seconds
-		) { onOtpButtonEnabled() }
-	}
-
 	PPATextField(
 		value = otpTextFieldValue,
 		singleLine = true,
+		modifier = modifier,
 		keyboardOptions = KeyboardOptions(
 			imeAction = ImeAction.Next,
 			keyboardType = KeyboardType.Number
@@ -486,47 +460,17 @@ private fun OtpTextField(
 		),
 		onValueChange = { newValue ->
 			otpTextFieldValue = newValue.copy(
-				text = newValue.text.filter { it.isDigit() }
+				text = newValue.text
+					.filter { it.isDigit() }
+					.take(Constant.OTP_LENGTH)
+
 			).preventSelection(otpTextFieldValue)
 
 			rememberedOnOtpChanged(otpTextFieldValue.text)
 		},
 		placeholder = {
 			Text(stringResource(id = R.string.otp))
-		},
-		trailingIcon = {
-			AnimatedContent(
-				label = "otp_trailing_icon",
-				targetState = isTimerRunning,
-				transitionSpec = {
-					scaleIn() togetherWith scaleOut()
-				}
-			) { isRunning ->
-				Box(
-					contentAlignment = Alignment.Center,
-					modifier = Modifier
-						.minimumInteractiveComponentSize()
-				) {
-					if (isRunning) {
-						AnimatedTextByChar(
-							text = (remainingTimeInMilliseconds / 1000).toString(),
-							style = PPATheme.typography.bodyMedium.copy(
-								color = PPATheme.colorScheme.inverseOnBackground.copy(alpha = 0.7f)
-							)
-						)
-					} else {
-						IconButton(onClick = onSendOtp) {
-							Icon(
-								painter = painterResource(id = R.drawable.ic_send),
-								contentDescription = null,
-								tint = PPATheme.colorScheme.inverseOnBackground.copy(alpha = 0.7f)
-							)
-						}
-					}
-				}
-			}
-		},
-		modifier = modifier
+		}
 	)
 }
 

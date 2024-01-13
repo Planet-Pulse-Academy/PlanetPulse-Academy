@@ -14,6 +14,7 @@ import com.ufovanguard.planetpulseacademy.foundation.common.validator.EmailValid
 import com.ufovanguard.planetpulseacademy.foundation.common.validator.OtpValidator
 import com.ufovanguard.planetpulseacademy.foundation.common.validator.PasswordConfirmValidator
 import com.ufovanguard.planetpulseacademy.foundation.common.validator.PasswordValidator
+import com.ufovanguard.planetpulseacademy.foundation.worker.ForgotPasswordWorker
 import com.ufovanguard.planetpulseacademy.foundation.worker.RegisterWorker
 import com.ufovanguard.planetpulseacademy.foundation.worker.Workers
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -59,7 +60,7 @@ class ForgotPasswordViewModel @Inject constructor(
 
 							copy(
 								isLoading = false,
-								isSendOtpButtonEnabled = false
+								isEmailMode = false
 							)
 						}
 						WorkInfo.State.FAILED -> {
@@ -70,7 +71,15 @@ class ForgotPasswordViewModel @Inject constructor(
 								)
 							)
 
-							copy(isLoading = false)
+							// Get https status code and check the code, if status code is 401 assume the otp has been sent before
+							val statusCode = workInfo.outputData.getInt(ForgotPasswordWorker.EXTRA_HTTP_STATUS_CODE, -1)
+							// if status code is 401, set isEmailMode to false, otherwise true
+							val newIsEmailMode = statusCode != 401
+
+							copy(
+								isLoading = false,
+								isEmailMode = newIsEmailMode
+							)
 						}
 						else -> this
 					}
@@ -84,11 +93,6 @@ class ForgotPasswordViewModel @Inject constructor(
 			}.collectLatest { workInfo ->
 				updateState {
 					when (workInfo.state) {
-						WorkInfo.State.SUCCEEDED -> {
-							copy(
-								isOtpVerified = true
-							)
-						}
 						WorkInfo.State.FAILED -> {
 							sendEvent(
 								ForgotPasswordUiEvent.FailedToSendOtp(
@@ -178,15 +182,15 @@ class ForgotPasswordViewModel @Inject constructor(
 		}
 	}
 
-	fun setOtpButtonEnabled(enabled: Boolean) {
+	fun setIsEmailMode(isEmailMode: Boolean) {
 		updateState {
 			copy(
-				isSendOtpButtonEnabled = enabled
+				isEmailMode = isEmailMode
 			)
 		}
 	}
 
-	fun validate(onSuccess: (otp: String, email: String, password: String, passwordConfirm: String) -> Unit) {
+	private fun validateAll(onSuccess: (otp: String, email: String, password: String, passwordConfirm: String) -> Unit) {
 		val passwordConfirm = state.value.passwordConfirm.trim()
 		val password = state.value.password.trim()
 		val email = state.value.email.trim()
@@ -219,26 +223,44 @@ class ForgotPasswordViewModel @Inject constructor(
 		}
 	}
 
-	fun requestOtp() {
-		validate { _, email, _, _ ->
-			viewModelScope.launch {
-				updateState {
-					copy(
-						isLoading = true
-					)
-				}
+	private fun requestOtp() {
+		val email = state.value.email.trim()
 
-				workManager.enqueue(
-					Workers.forgotPasswordWorker(
-						ForgotPasswordBody(email)
-					).also { _currentRequestOtpWorkId.send(it.id) }
+		viewModelScope.launch {
+			updateState {
+				copy(
+					isLoading = true
 				)
 			}
+
+			workManager.enqueue(
+				Workers.forgotPasswordWorker(
+					ForgotPasswordBody(email)
+				).also { _currentRequestOtpWorkId.send(it.id) }
+			)
 		}
 	}
 
 	fun confirm() {
-		validate { otp, email, password, _ ->
+		if (state.value.isEmailMode) {
+			val email = state.value.email.trim()
+			val emailValidatorResult = EmailValidator().validate(email)
+
+			updateState {
+				copy(
+					email = email,
+					emailErrMsg = emailValidatorResult.errMsg
+				)
+			}
+
+			if (emailValidatorResult.isSuccess) {
+				requestOtp()
+			}
+
+			return
+		}
+
+		validateAll { otp, email, password, _ ->
 			viewModelScope.launch {
 				updateState {
 					copy(
