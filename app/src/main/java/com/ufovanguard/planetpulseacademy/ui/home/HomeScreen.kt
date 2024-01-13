@@ -50,7 +50,6 @@ private fun HomeScreenPreview() {
 	}
 }
 
-@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun HomeScreen(
 	viewModel: HomeViewModel,

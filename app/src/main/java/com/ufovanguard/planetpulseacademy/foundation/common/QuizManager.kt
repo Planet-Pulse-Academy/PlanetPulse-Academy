@@ -2,40 +2,67 @@ package com.ufovanguard.planetpulseacademy.foundation.common
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import javax.inject.Inject
 
-class QuizManager @Inject constructor() {
+class QuizManager<T> {
 
-	private var currentQuestionIndex = -1
+	private var _currentQuestionIndex = -1
+	val currentQuestionIndex: Int
+		get() = _currentQuestionIndex
 
-	private val _currentQuestion = MutableStateFlow<Question?>(null)
-	val currentQuestion: StateFlow<Question?> = _currentQuestion
+	private val _currentQuestion = MutableStateFlow<T?>(null)
+	val currentQuestion: StateFlow<T?> = _currentQuestion
 
-	private val _questions = MutableStateFlow(emptyList<Question>())
-	val questions: StateFlow<List<Question>> = _questions
+	private val _questions = MutableStateFlow(emptyList<T>())
+	val questions: StateFlow<List<T>> = _questions
 
-	suspend fun setQuestions(questions: List<Question>) {
+	suspend fun setQuestions(questions: List<T>) {
 		_questions.emit(questions)
+		_currentQuestionIndex = 0
+		_currentQuestion.emit(questions[_currentQuestionIndex])
 	}
 
-	fun hasPrevious(): Boolean = questions.value.getOrNull(currentQuestionIndex - 1) != null
+	fun hasPrevious(): Boolean = questions.value.getOrNull(_currentQuestionIndex - 1) != null
 
-	fun hasNext(): Boolean = questions.value.getOrNull(currentQuestionIndex + 1) != null
+	fun hasNext(): Boolean = questions.value.getOrNull(_currentQuestionIndex + 1) != null
+
+	fun ensureInBounds(index: Int): Boolean {
+		return index > 0 || index < questions.value.lastIndex
+	}
+
+	/**
+	 * @param index question index in [questions]
+	 */
+	suspend fun updateQuestion(index: Int, newQuestion: T.() -> T) {
+		currentQuestion.value?.let {
+			_questions.emit(
+				questions.value.toMutableList().apply {
+					set(index, newQuestion(it))
+				}
+			)
+
+			_currentQuestion.emit(questions.value[index])
+		}
+	}
 
 	suspend fun previous() {
 		if (hasPrevious()) {
-			currentQuestionIndex--
-			_currentQuestion.emit(questions.value[currentQuestionIndex])
+			_currentQuestionIndex--
+			_currentQuestion.emit(questions.value[_currentQuestionIndex])
 		}
 	}
 
 	suspend fun next() {
 		if (hasNext()) {
-			currentQuestionIndex++
-			_currentQuestion.emit(questions.value[currentQuestionIndex])
+			_currentQuestionIndex++
+			_currentQuestion.emit(questions.value[_currentQuestionIndex])
+		}
+	}
+
+	suspend fun seekTo(index: Int) {
+		if (ensureInBounds(index)) {
+			_currentQuestionIndex = index
+			_currentQuestion.emit(questions.value[_currentQuestionIndex])
 		}
 	}
 
 }
-
-interface Question

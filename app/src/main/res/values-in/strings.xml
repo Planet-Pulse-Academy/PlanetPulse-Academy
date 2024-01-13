@@ -35,9 +35,11 @@
     <string name="password_reset_successful">Atur ulang kata sandi berhasil</string>
     <string name="otp_cannot_be_empty">OTP tidak boleh kosong</string>
     <string name="hi_name">Halo %1$s</string>
-    <string name="next">Lanjut</string>
+    <string name="next">Berikutnya</string>
     <string name="skip">Lewati</string>
     <string name="academy">Akademi</string>
     <string name="profile">Profil</string>
+    <string name="previous">Sebelumnya</string>
+    <string name="finish">Selesai</string>
 
 </resources>
