@@ -1,10 +1,10 @@
 package com.ufovanguard.planetpulseacademy.ui.home
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -32,7 +32,6 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.ufovanguard.planetpulseacademy.R
 import com.ufovanguard.planetpulseacademy.data.Destination
-import com.ufovanguard.planetpulseacademy.data.Destinations
 import com.ufovanguard.planetpulseacademy.foundation.base.ui.BaseScreenWrapper
 import com.ufovanguard.planetpulseacademy.foundation.theme.PPATheme
 import com.ufovanguard.planetpulseacademy.foundation.theme.PlanetPulseAcademyTheme
@@ -109,9 +108,6 @@ private fun HomeScreenContent(
 						.padding(16.dp)
 						.clip(CircleShape)
 						.size(48.dp)
-						.clickable {
-							navigateTo(Destinations.Main.profile, null)
-						}
 				)
 			}
 		}
@@ -170,6 +166,10 @@ private fun HomeScreenContent(
 			) {
 
 			}
+		}
+
+		item {
+			Spacer(modifier = Modifier.height(16.dp))
 		}
 	}
 

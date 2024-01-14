@@ -41,5 +41,8 @@
     <string name="profile">Profil</string>
     <string name="previous">Sebelumnya</string>
     <string name="finish">Selesai</string>
+    <string name="home">Rumah</string>
+    <string name="discover">Telusuri</string>
+    <string name="search">Cari</string>
 
 </resources>
