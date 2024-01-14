@@ -7,19 +7,17 @@ import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import com.google.gson.Gson
 import com.ufovanguard.planetpulseacademy.data.model.remote.response.ErrorResponse
-import com.ufovanguard.planetpulseacademy.data.repository.UserProfileRepository
-import com.ufovanguard.planetpulseacademy.data.repository.UserRepository
+import com.ufovanguard.planetpulseacademy.data.repository.AcademyRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import timber.log.Timber
 
 @HiltWorker
-class ProfileWorker @AssistedInject constructor(
+class GetAcademyWorker @AssistedInject constructor(
 	@Assisted private val context: Context,
 	@Assisted params: WorkerParameters,
-	private val userProfileRepository: UserProfileRepository,
-	private val userRepository: UserRepository
+	private val academyRepository: AcademyRepository
 ): CoroutineWorker(context, params) {
+
 	override suspend fun doWork(): Result {
 		return WorkerUtil.tryApiRequest(
 			extraErrorMsg = EXTRA_ERROR_MESSAGE,
@@ -31,16 +29,12 @@ class ProfileWorker @AssistedInject constructor(
 				)
 			}
 		) {
-			val response = userRepository.profile(
+			val response = academyRepository.getRemoteAcademy(
 				token = inputData.getString(EXTRA_TOKEN)!!
 			)
 
 			if (response.isSuccessful) {
-				userProfileRepository.setProfile(
-					response.body()!!.data[0].also {
-						Timber.i("User profile: $it")
-					}
-				)
+				academyRepository.insertLocalAcademy(response.body()!!.data)
 				Result.success()
 			} else {
 				val errMsg = response.errorBody().let {
@@ -50,7 +44,7 @@ class ProfileWorker @AssistedInject constructor(
 
 				Result.failure(
 					workDataOf(
-						LoginWorker.EXTRA_ERROR_MESSAGE to errMsg
+						EXTRA_ERROR_MESSAGE to errMsg
 					)
 				)
 			}
@@ -59,7 +53,7 @@ class ProfileWorker @AssistedInject constructor(
 
 	companion object {
 		const val EXTRA_ERROR_MESSAGE = "errMsg"
-
 		const val EXTRA_TOKEN = "token"
 	}
+
 }

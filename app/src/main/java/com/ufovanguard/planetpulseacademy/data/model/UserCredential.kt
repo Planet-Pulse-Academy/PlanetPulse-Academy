@@ -14,4 +14,6 @@ data class UserCredential(
 	val isLoggedIn: Boolean
 		get() = id.isNotBlank() and name.isNotBlank() and email.isNotBlank() and token.isNotBlank()
 
+	fun getBearerToken(): String = "bearer $token"
+
 }

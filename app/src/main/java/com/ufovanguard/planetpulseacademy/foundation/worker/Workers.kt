@@ -106,4 +106,19 @@ object Workers {
 			.build()
 	}
 
+	fun getAcademy(token: String): OneTimeWorkRequest {
+		return OneTimeWorkRequestBuilder<GetAcademyWorker>()
+			.setConstraints(
+				Constraints(
+					requiredNetworkType = NetworkType.CONNECTED
+				)
+			)
+			.setInputData(
+				workDataOf(
+					GetAcademyWorker.EXTRA_TOKEN to token
+				)
+			)
+			.build()
+	}
+
 }

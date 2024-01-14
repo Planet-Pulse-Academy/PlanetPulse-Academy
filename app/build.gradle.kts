@@ -141,7 +141,7 @@ dependencies {
     implementation("com.google.android.material:material:1.11.0")
     implementation("androidx.compose.material:material:${extra["compose_version"]}")
     implementation("androidx.compose.material:material-icons-extended:${extra["compose_version"]}")
-    implementation("androidx.compose.material3:material3-android:1.2.0-beta01")
+    implementation("androidx.compose.material3:material3-android:1.2.0-beta02")
     implementation("androidx.compose.material3:material3-window-size-class:1.1.2")
 
     // Large screen support
