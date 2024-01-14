@@ -4,13 +4,17 @@ import androidx.datastore.core.DataStore
 import com.ufovanguard.planetpulseacademy.ProtoUserCredential
 import com.ufovanguard.planetpulseacademy.ProtoUserPreference
 import com.ufovanguard.planetpulseacademy.ProtoUserProfile
+import com.ufovanguard.planetpulseacademy.data.datasource.local.dao.AcademyDao
+import com.ufovanguard.planetpulseacademy.data.datasource.remote.AcademyService
 import com.ufovanguard.planetpulseacademy.data.datasource.remote.AuthService
 import com.ufovanguard.planetpulseacademy.data.datasource.remote.UserService
+import com.ufovanguard.planetpulseacademy.data.repository.AcademyRepository
 import com.ufovanguard.planetpulseacademy.data.repository.AuthRepository
 import com.ufovanguard.planetpulseacademy.data.repository.UserCredentialRepository
 import com.ufovanguard.planetpulseacademy.data.repository.UserPreferenceRepository
 import com.ufovanguard.planetpulseacademy.data.repository.UserProfileRepository
 import com.ufovanguard.planetpulseacademy.data.repository.UserRepository
+import com.ufovanguard.planetpulseacademy.data.repository.impl.AcademyRepositoryImpl
 import com.ufovanguard.planetpulseacademy.data.repository.impl.AuthRepositoryImpl
 import com.ufovanguard.planetpulseacademy.data.repository.impl.UserCredentialRepositoryImpl
 import com.ufovanguard.planetpulseacademy.data.repository.impl.UserPreferenceRepositoryImpl
@@ -55,5 +59,12 @@ class RepositoryModule {
 	fun provideUserRepository(
 		userService: UserService
 	): UserRepository = UserRepositoryImpl(userService)
+
+	@Provides
+	@Singleton
+	fun provideAcademyRepository(
+		academyDao: AcademyDao,
+		academyService: AcademyService
+	): AcademyRepository = AcademyRepositoryImpl(academyService, academyDao)
 
 }

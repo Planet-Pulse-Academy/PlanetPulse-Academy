@@ -17,10 +17,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -157,17 +159,26 @@ fun PPATextField(
 	interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
 	cursorBrush: Brush = SolidColor(PPATheme.colorScheme.primary),
 	containerColor: Color = PPATheme.colorScheme.primaryContainer,
+	contentColor: Color = PPATheme.colorScheme.contentColorFor(containerColor),
 	supportingText: @Composable (() -> Unit)? = null,
 	placeholder: @Composable (() -> Unit)? = null,
 	trailingIcon: @Composable (() -> Unit)? = null,
 	leadingIcon: @Composable (() -> Unit)? = null,
 ) {
 
+	val mTextStyle = remember(textStyle, contentColor) {
+		textStyle.copy(
+			color = contentColor
+		)
+	}
+
 	PPATextFieldContainer(
-		paddingValues = paddingValues,
 		shape = shape,
 		isError = isError,
+		modifier = modifier,
+		paddingValues = paddingValues,
 		containerColor = containerColor,
+		contentColor = contentColor,
 		supportingText = supportingText,
 		trailingIcon = trailingIcon,
 		leadingIcon = leadingIcon,
@@ -177,7 +188,7 @@ fun PPATextField(
 				onValueChange = onValueChange,
 				enabled = enabled,
 				readOnly = readOnly,
-				textStyle = textStyle,
+				textStyle = mTextStyle,
 				keyboardOptions = keyboardOptions,
 				keyboardActions = keyboardActions,
 				singleLine = singleLine,
@@ -190,14 +201,14 @@ fun PPATextField(
 				decorationBox = { innerTextField ->
 					DecorationBox(
 						value = value,
-						textStyle = textStyle,
+						textStyle = mTextStyle,
 						placeholder = placeholder,
 						innerTextField = innerTextField,
 						modifier = Modifier
 							.fillMaxWidth()
 					)
 				},
-				modifier = modifier
+				modifier = Modifier
 					.weight(1f)
 			)
 		}
@@ -206,16 +217,18 @@ fun PPATextField(
 
 @Composable
 private fun PPATextFieldContainer(
+	modifier: Modifier = Modifier,
 	paddingValues: PaddingValues = PPATextFieldDefaults.contentPadding,
 	shape: Shape = MaterialTheme.shapes.medium,
 	isError: Boolean = false,
 	containerColor: Color = PPATheme.colorScheme.primaryContainer,
+	contentColor: Color = PPATheme.colorScheme.contentColorFor(containerColor),
 	supportingText: @Composable (() -> Unit)? = null,
 	trailingIcon: @Composable (() -> Unit)? = null,
 	leadingIcon: @Composable (() -> Unit)? = null,
 	textField: @Composable RowScope.() -> Unit
 ) {
-	Column {
+	Column(modifier = modifier) {
 		Box(
 			contentAlignment = Alignment.CenterStart,
 			modifier = Modifier
@@ -235,18 +248,24 @@ private fun PPATextFieldContainer(
 					.padding(paddingValues)
 					.fillMaxWidth()
 			) {
-				leadingIcon?.invoke()
+				CompositionLocalProvider(LocalContentColor provides contentColor) {
+					leadingIcon?.invoke()
+				}
 
 				textField()
 
-				trailingIcon?.invoke()
+				CompositionLocalProvider(LocalContentColor provides contentColor) {
+					trailingIcon?.invoke()
+				}
 			}
 		}
 
 		if (supportingText != null && isError) {
 			ProvideTextStyle(
 				content = supportingText,
-				value = PPATheme.typography.labelMedium
+				value = PPATheme.typography.labelMedium.copy(
+					color = contentColor
+				)
 			)
 		}
 	}

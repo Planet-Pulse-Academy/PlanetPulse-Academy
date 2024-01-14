@@ -42,4 +42,7 @@
     <string name="profile">Profile</string>
     <string name="previous">Previous</string>
     <string name="finish">Finish</string>
+    <string name="home">Home</string>
+    <string name="discover">Discover</string>
+    <string name="search">Search</string>
 </resources>

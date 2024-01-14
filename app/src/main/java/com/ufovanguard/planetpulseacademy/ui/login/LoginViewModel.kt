@@ -45,7 +45,7 @@ class LoginViewModel @Inject constructor(
 	private val currentGetProfileWorkId: Flow<UUID?> = _currentGetProfileWorkId.receiveAsFlow()
 
 	init {
-	    viewModelScope.launch {
+		viewModelScope.launch {
 			currentLoginWorkId.filterNotNull().flatMapLatest { uuid ->
 				workManager.getWorkInfoByIdFlow(uuid)
 			}.collectLatest { workInfo ->

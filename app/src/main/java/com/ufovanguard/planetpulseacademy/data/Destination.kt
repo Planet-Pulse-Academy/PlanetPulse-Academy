@@ -4,6 +4,7 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavDeepLink
+import com.ufovanguard.planetpulseacademy.R
 
 /**
  * @author kafri8889
@@ -13,6 +14,7 @@ object DestinationRoute {
 	const val FORGOT_PASSWORD = "forgot_password"
 	const val ONBOARDING = "onboarding"
 	const val REGISTER = "register"
+	const val ACADEMY = "academy"
 	const val PROFILE = "profile"
 	const val LESSON = "lesson"
 	const val LOGIN = "login"
@@ -129,7 +131,21 @@ object Destinations {
 		)
 
 		val home = Destination(
-			route = DestinationRoute.HOME
+			route = DestinationRoute.HOME,
+			title = R.string.home,
+			icon = R.drawable.ic_home_filled
+		)
+
+		val academy = Destination(
+			route = DestinationRoute.ACADEMY,
+			title = R.string.academy,
+			icon = R.drawable.ic_book_filled
+		)
+
+		val profile = Destination(
+			route = DestinationRoute.PROFILE,
+			title = R.string.profile,
+			icon = R.drawable.ic_user_filled
 		)
 
 		val quiz = Destination(
@@ -139,10 +155,11 @@ object Destinations {
 		val lesson = Destination(
 			route = DestinationRoute.LESSON
 		)
-
-		val profile = Destination(
-			route = DestinationRoute.PROFILE
-		)
 	}
 
+	val bottomNavigation = listOf(
+		Main.home,
+		Main.academy,
+		Main.profile
+	)
 }

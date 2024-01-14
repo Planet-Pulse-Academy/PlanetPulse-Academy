@@ -16,7 +16,17 @@ data class PPAColorScheme(
 	val onBackground: Color,
 	val inverseOnBackground: Color,
 	val button: Color,
-)
+) {
+	fun contentColorFor(color: Color): Color {
+		return when (color) {
+			primary -> onPrimary
+			primaryContainer -> onPrimaryContainer
+			background -> onBackground
+			onBackground -> inverseOnBackground
+			else -> color
+		}
+	}
+}
 
 val LocalPPAContentColor = compositionLocalOf { Color.Unspecified }
 

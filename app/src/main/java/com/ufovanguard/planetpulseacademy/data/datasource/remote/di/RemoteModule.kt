@@ -1,6 +1,7 @@
 package com.ufovanguard.planetpulseacademy.data.datasource.remote.di
 
 import com.ufovanguard.planetpulseacademy.BuildConfig
+import com.ufovanguard.planetpulseacademy.data.datasource.remote.AcademyService
 import com.ufovanguard.planetpulseacademy.data.datasource.remote.AuthService
 import com.ufovanguard.planetpulseacademy.data.datasource.remote.UserService
 import dagger.Module
@@ -73,5 +74,11 @@ class RemoteModule {
 	fun provideUserService(
 		retrofit: Retrofit
 	): UserService = retrofit.create(UserService::class.java)
+
+	@Singleton
+	@Provides
+	fun provideAcademyService(
+		retrofit: Retrofit
+	): AcademyService = retrofit.create(AcademyService::class.java)
 
 }
