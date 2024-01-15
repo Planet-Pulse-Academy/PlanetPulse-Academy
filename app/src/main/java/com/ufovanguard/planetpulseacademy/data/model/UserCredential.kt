@@ -16,4 +16,15 @@ data class UserCredential(
 
 	fun getBearerToken(): String = "bearer $token"
 
+	companion object {
+
+		/**
+		 * append "bearer" if [token] not contains "bearer"
+		 */
+		fun getBearerToken(token: String): String {
+			return if (!token.contains("bearer")) "bearer $token" else token
+		}
+
+	}
+
 }

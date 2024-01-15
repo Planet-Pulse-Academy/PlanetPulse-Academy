@@ -121,4 +121,19 @@ object Workers {
 			.build()
 	}
 
+	fun getAllLesson(token: String): OneTimeWorkRequest {
+		return OneTimeWorkRequestBuilder<GetAllLessonWorker>()
+			.setConstraints(
+				Constraints(
+					requiredNetworkType = NetworkType.CONNECTED
+				)
+			)
+			.setInputData(
+				workDataOf(
+					GetAllLessonWorker.EXTRA_TOKEN to token
+				)
+			)
+			.build()
+	}
+
 }

@@ -8,10 +8,12 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.ufovanguard.planetpulseacademy.data.model.remote.body.LoginBody
+import com.ufovanguard.planetpulseacademy.data.repository.UserCredentialRepository
 import com.ufovanguard.planetpulseacademy.data.repository.UserPreferenceRepository
 import com.ufovanguard.planetpulseacademy.foundation.base.ui.BaseViewModel
 import com.ufovanguard.planetpulseacademy.foundation.common.validator.PasswordValidator
 import com.ufovanguard.planetpulseacademy.foundation.common.validator.UsernameValidator
+import com.ufovanguard.planetpulseacademy.foundation.worker.GetAllLessonWorker
 import com.ufovanguard.planetpulseacademy.foundation.worker.LoginWorker
 import com.ufovanguard.planetpulseacademy.foundation.worker.ProfileWorker
 import com.ufovanguard.planetpulseacademy.foundation.worker.Workers
@@ -31,6 +33,7 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
 	private val userPreferenceRepository: UserPreferenceRepository,
+	private val userCredentialRepository: UserCredentialRepository,
 	private val workManager: WorkManager,
 	savedStateHandle: SavedStateHandle
 ): BaseViewModel<LoginState>(
@@ -168,18 +171,16 @@ class LoginViewModel @Inject constructor(
 					.also {
 						_currentGetProfileWorkId.send(it.id)
 					}
-			).enqueue()
-
-			workManager.enqueue(
-				Workers.loginWorker(
-					LoginBody(
-						username = username,
-						password = password
+			).then(
+				// Get available lesson and save to db
+				OneTimeWorkRequestBuilder<GetAllLessonWorker>()
+					.setConstraints(
+						Constraints(
+							requiredNetworkType = NetworkType.CONNECTED
+						)
 					)
-				).also {
-					_currentLoginWorkId.send(it.id)
-				}
-			)
+					.build()
+			).enqueue()
 		}
 	}
 

@@ -153,7 +153,9 @@ object Destinations {
 		)
 
 		val lesson = Destination(
-			route = DestinationRoute.LESSON
+			route = DestinationRoute.LESSON,
+			title = R.string.lesson,
+			icon = R.drawable.ic_book_filled
 		)
 	}
 

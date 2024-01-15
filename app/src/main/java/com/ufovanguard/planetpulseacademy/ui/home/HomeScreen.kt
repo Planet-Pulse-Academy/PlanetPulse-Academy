@@ -15,14 +15,19 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -32,7 +37,9 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.ufovanguard.planetpulseacademy.R
 import com.ufovanguard.planetpulseacademy.data.Destination
+import com.ufovanguard.planetpulseacademy.data.Destinations
 import com.ufovanguard.planetpulseacademy.foundation.base.ui.BaseScreenWrapper
+import com.ufovanguard.planetpulseacademy.foundation.common.LocalBottomBarPadding
 import com.ufovanguard.planetpulseacademy.foundation.theme.PPATheme
 import com.ufovanguard.planetpulseacademy.foundation.theme.PlanetPulseAcademyTheme
 
@@ -148,13 +155,39 @@ private fun HomeScreenContent(
 		
 		item { 
 			Row(
+				horizontalArrangement = Arrangement.spacedBy(8.dp),
 				modifier = Modifier
 					.fillMaxWidth(0.92f)
 			) {
 				Text(
-					text = stringResource(id = R.string.academy),
-					style = PPATheme.typography.titleLarge
+					text = stringResource(id = R.string.lessons),
+					style = PPATheme.typography.titleLarge,
+					modifier = Modifier
+						.weight(1f)
 				)
+
+				TextButton(
+					shape = MaterialTheme.shapes.small,
+					contentPadding = ButtonDefaults.TextButtonWithIconContentPadding,
+					colors = ButtonDefaults.textButtonColors(
+						contentColor = PPATheme.colorScheme.onBackground
+					),
+					onClick = {
+						navigateTo(Destinations.Main.lesson, null)
+					}
+				) {
+					Text(text = stringResource(id = R.string.discover))
+
+					Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing))
+
+					Icon(
+						painter = painterResource(id = R.drawable.ic_arrow_right_new),
+						contentDescription = null,
+						tint = PPATheme.colorScheme.onBackground,
+						modifier = Modifier
+							.size(ButtonDefaults.IconSize)
+					)
+				}
 			}
 		}
 
@@ -169,7 +202,10 @@ private fun HomeScreenContent(
 		}
 
 		item {
-			Spacer(modifier = Modifier.height(16.dp))
+			Spacer(
+				modifier = Modifier
+					.height(16.dp + LocalBottomBarPadding.current)
+			)
 		}
 	}
 

@@ -44,5 +44,7 @@
     <string name="home">Rumah</string>
     <string name="discover">Telusuri</string>
     <string name="search">Cari</string>
+    <string name="lesson">Pelajaran</string>
+    <string name="lessons">Pelajaran</string>
 
 </resources>

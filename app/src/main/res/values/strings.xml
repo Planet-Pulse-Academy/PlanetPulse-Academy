@@ -45,4 +45,6 @@
     <string name="home">Home</string>
     <string name="discover">Discover</string>
     <string name="search">Search</string>
+    <string name="lesson">Lesson</string>
+    <string name="lessons">Lessons</string>
 </resources>

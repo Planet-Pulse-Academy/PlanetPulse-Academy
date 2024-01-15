@@ -3,6 +3,7 @@ package com.ufovanguard.planetpulseacademy.foundation.base.ui
 import android.os.Parcelable
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.SnackbarHost
@@ -13,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import com.anafthdev.comdeo.foundation.extension.toast
 import com.ufovanguard.planetpulseacademy.foundation.base.ui.UiEvent.DismissCurrentSnackbar.parse
@@ -37,6 +39,7 @@ fun <STATE: Parcelable> BaseScreenWrapper(
 	viewModel: BaseViewModel<STATE>,
 	modifier: Modifier = Modifier,
 	contentWindowInsets: WindowInsets = ScaffoldDefaults.contentWindowInsets,
+	containerColor: Color = MaterialTheme.colorScheme.background,
 	onEvent: (UiEvent) -> Unit = {},
 	topBar: @Composable () -> Unit = {},
 	bottomBar: @Composable () -> Unit = {},
@@ -79,6 +82,7 @@ fun <STATE: Parcelable> BaseScreenWrapper(
 	Scaffold(
 		topBar = topBar,
 		bottomBar = bottomBar,
+		containerColor = containerColor,
 		contentWindowInsets = contentWindowInsets,
 		floatingActionButton = floatingActionButton,
 		modifier = modifier,
