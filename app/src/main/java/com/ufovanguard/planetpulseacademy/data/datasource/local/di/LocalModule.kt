@@ -5,6 +5,7 @@ import androidx.room.Room
 import com.ufovanguard.planetpulseacademy.data.Constant
 import com.ufovanguard.planetpulseacademy.data.datasource.local.AppDatabase
 import com.ufovanguard.planetpulseacademy.data.datasource.local.dao.AcademyDao
+import com.ufovanguard.planetpulseacademy.data.datasource.local.dao.LessonDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -28,4 +29,10 @@ class LocalModule {
 	fun provideAcademyDao(
 		appDatabase: AppDatabase
 	): AcademyDao = appDatabase.academyDao()
+
+	@Provides
+	@Singleton
+	fun provideLessonDao(
+		appDatabase: AppDatabase
+	): LessonDao = appDatabase.lessonDao()
 }

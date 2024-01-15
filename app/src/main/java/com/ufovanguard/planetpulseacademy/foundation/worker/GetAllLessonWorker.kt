@@ -8,19 +8,17 @@ import androidx.work.workDataOf
 import com.google.gson.Gson
 import com.ufovanguard.planetpulseacademy.data.model.UserCredential
 import com.ufovanguard.planetpulseacademy.data.model.remote.response.ErrorResponse
-import com.ufovanguard.planetpulseacademy.data.repository.UserProfileRepository
-import com.ufovanguard.planetpulseacademy.data.repository.UserRepository
+import com.ufovanguard.planetpulseacademy.data.repository.LessonRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import timber.log.Timber
 
 @HiltWorker
-class ProfileWorker @AssistedInject constructor(
+class GetAllLessonWorker @AssistedInject constructor(
 	@Assisted private val context: Context,
 	@Assisted params: WorkerParameters,
-	private val userProfileRepository: UserProfileRepository,
-	private val userRepository: UserRepository
+	private val lessonRepository: LessonRepository
 ): CoroutineWorker(context, params) {
+
 	override suspend fun doWork(): Result {
 		return WorkerUtil.tryApiRequest(
 			extraErrorMsg = EXTRA_ERROR_MESSAGE,
@@ -33,19 +31,11 @@ class ProfileWorker @AssistedInject constructor(
 			}
 		) {
 			val token = UserCredential.getBearerToken(inputData.getString(EXTRA_TOKEN)!!)
-			val response = userRepository.profile(token)
+			val response = lessonRepository.getAllLesson(token)
 
 			if (response.isSuccessful) {
-				userProfileRepository.setProfile(
-					response.body()!!.data[0].also {
-						Timber.i("User profile: $it")
-					}
-				)
-				Result.success(
-					workDataOf(
-						EXTRA_TOKEN to token
-					)
-				)
+				lessonRepository.insertLocalLesson(response.body()!!.data)
+				Result.success()
 			} else {
 				val errMsg = response.errorBody().let {
 					if (it != null) Gson().fromJson(it.charStream(), ErrorResponse::class.java).message
@@ -54,7 +44,7 @@ class ProfileWorker @AssistedInject constructor(
 
 				Result.failure(
 					workDataOf(
-						LoginWorker.EXTRA_ERROR_MESSAGE to errMsg
+						EXTRA_ERROR_MESSAGE to errMsg
 					)
 				)
 			}
@@ -63,7 +53,7 @@ class ProfileWorker @AssistedInject constructor(
 
 	companion object {
 		const val EXTRA_ERROR_MESSAGE = "errMsg"
-
 		const val EXTRA_TOKEN = "token"
 	}
+
 }

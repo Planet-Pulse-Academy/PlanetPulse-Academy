@@ -5,17 +5,21 @@ import com.ufovanguard.planetpulseacademy.ProtoUserCredential
 import com.ufovanguard.planetpulseacademy.ProtoUserPreference
 import com.ufovanguard.planetpulseacademy.ProtoUserProfile
 import com.ufovanguard.planetpulseacademy.data.datasource.local.dao.AcademyDao
+import com.ufovanguard.planetpulseacademy.data.datasource.local.dao.LessonDao
 import com.ufovanguard.planetpulseacademy.data.datasource.remote.AcademyService
 import com.ufovanguard.planetpulseacademy.data.datasource.remote.AuthService
+import com.ufovanguard.planetpulseacademy.data.datasource.remote.LessonService
 import com.ufovanguard.planetpulseacademy.data.datasource.remote.UserService
 import com.ufovanguard.planetpulseacademy.data.repository.AcademyRepository
 import com.ufovanguard.planetpulseacademy.data.repository.AuthRepository
+import com.ufovanguard.planetpulseacademy.data.repository.LessonRepository
 import com.ufovanguard.planetpulseacademy.data.repository.UserCredentialRepository
 import com.ufovanguard.planetpulseacademy.data.repository.UserPreferenceRepository
 import com.ufovanguard.planetpulseacademy.data.repository.UserProfileRepository
 import com.ufovanguard.planetpulseacademy.data.repository.UserRepository
 import com.ufovanguard.planetpulseacademy.data.repository.impl.AcademyRepositoryImpl
 import com.ufovanguard.planetpulseacademy.data.repository.impl.AuthRepositoryImpl
+import com.ufovanguard.planetpulseacademy.data.repository.impl.LessonRepositoryImpl
 import com.ufovanguard.planetpulseacademy.data.repository.impl.UserCredentialRepositoryImpl
 import com.ufovanguard.planetpulseacademy.data.repository.impl.UserPreferenceRepositoryImpl
 import com.ufovanguard.planetpulseacademy.data.repository.impl.UserProfileRepositoryImpl
@@ -66,5 +70,12 @@ class RepositoryModule {
 		academyDao: AcademyDao,
 		academyService: AcademyService
 	): AcademyRepository = AcademyRepositoryImpl(academyService, academyDao)
+
+	@Provides
+	@Singleton
+	fun provideLessonRepository(
+		lessonDao: LessonDao,
+		lessonService: LessonService
+	): LessonRepository = LessonRepositoryImpl(lessonService, lessonDao)
 
 }
