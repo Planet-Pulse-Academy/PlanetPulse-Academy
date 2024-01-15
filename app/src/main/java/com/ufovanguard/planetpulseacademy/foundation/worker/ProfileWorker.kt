@@ -32,7 +32,7 @@ class ProfileWorker @AssistedInject constructor(
 			}
 		) {
 			val response = userRepository.profile(
-				token = inputData.getString(EXTRA_TOKEN)!!
+				token = "bearer ${inputData.getString(EXTRA_TOKEN)!!}"
 			)
 
 			if (response.isSuccessful) {

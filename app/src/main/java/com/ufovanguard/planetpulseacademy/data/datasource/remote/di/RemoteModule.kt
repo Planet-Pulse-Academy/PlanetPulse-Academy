@@ -58,7 +58,7 @@ class RemoteModule {
 	): Retrofit {
 		return Retrofit.Builder()
 			.addConverterFactory(GsonConverterFactory.create())
-			.baseUrl("https://us-central1-planetpulse-b2400.cloudfunctions.net/") // TODO: Move url to gradle
+			.baseUrl(BuildConfig.API_BASE_URL)
 			.client(okHttpClient)
 			.build()
 	}
