@@ -36,6 +36,8 @@ android {
             isMinifyEnabled = true
             isShrinkResources = true
 
+			buildConfigField("String", "API_BASE_URL", "\"https://planet-pulse-be.vercel.app/\"")
+
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -51,6 +53,8 @@ android {
         debug {
             isMinifyEnabled = false
             isDebuggable = true
+
+			buildConfigField("String", "API_BASE_URL", "\"https://planet-pulse-be.vercel.app/\"")
 
             kotlinOptions {
                 freeCompilerArgs += listOf(
@@ -109,7 +113,7 @@ dependencies {
 
 	val compose_version by extra("1.5.4")
 	val espresso_version = "3.5.1"
-	val lifecycle_version = "2.6.2"
+	val lifecycle_version = "2.7.0"
 	val accompanist_version = "0.32.0"
 
     implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.5")
@@ -167,14 +171,14 @@ dependencies {
 
     // Dependency Injection
     implementation("com.google.dagger:hilt-android:2.48")
-    ksp("androidx.hilt:hilt-compiler:1.1.0")
-    ksp("com.google.dagger:hilt-compiler:2.48")
-    ksp("com.google.dagger:hilt-android-compiler:2.48")
+    kapt("androidx.hilt:hilt-compiler:1.1.0")
+    kapt("com.google.dagger:hilt-compiler:2.48")
+    kapt("com.google.dagger:hilt-android-compiler:2.48")
 
     // Room
     implementation("androidx.room:room-runtime:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
-    ksp("androidx.room:room-compiler:2.6.1")
+    kapt("androidx.room:room-compiler:2.6.1")
 
     // Work Manager
     implementation("androidx.hilt:hilt-work:1.1.0")
