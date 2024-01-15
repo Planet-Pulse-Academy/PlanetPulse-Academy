@@ -41,6 +41,7 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
 import com.ufovanguard.planetpulseacademy.R
 import com.ufovanguard.planetpulseacademy.foundation.base.ui.BaseScreenWrapper
+import com.ufovanguard.planetpulseacademy.foundation.common.LocalBottomBarPadding
 import com.ufovanguard.planetpulseacademy.foundation.theme.PPATheme
 import com.ufovanguard.planetpulseacademy.foundation.theme.PlanetPulseAcademyTheme
 
@@ -75,6 +76,7 @@ fun ProfileScreen(
 			modifier = Modifier
 				.fillMaxSize()
 				.background(PPATheme.colorScheme.background)
+				.padding(bottom = LocalBottomBarPadding.current)
 				.padding(scaffoldPadding)
 		)
 	}

@@ -1,6 +1,11 @@
 package com.ufovanguard.planetpulseacademy.ui.app
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetValue
@@ -12,14 +17,17 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
@@ -35,7 +43,9 @@ import com.google.accompanist.navigation.material.ModalBottomSheetLayout
 import com.ufovanguard.planetpulseacademy.data.Destination
 import com.ufovanguard.planetpulseacademy.data.Destinations
 import com.ufovanguard.planetpulseacademy.foundation.base.ui.BaseScreenWrapper
+import com.ufovanguard.planetpulseacademy.foundation.common.LocalBottomBarPadding
 import com.ufovanguard.planetpulseacademy.foundation.extension.Zero
+import com.ufovanguard.planetpulseacademy.foundation.theme.PPATheme
 import com.ufovanguard.planetpulseacademy.ui.academy.AcademyScreen
 import com.ufovanguard.planetpulseacademy.ui.forgot_password.ForgotPasswordScreen
 import com.ufovanguard.planetpulseacademy.ui.home.HomeScreen
@@ -80,38 +90,8 @@ fun PlanetPulseAcademy(
 
 	BaseScreenWrapper(
 		viewModel = viewModel,
-		contentWindowInsets = WindowInsets.Zero,
-		bottomBar = {
-			if (showBottomNavigation) {
-				NavigationBar {
-					for (destination in Destinations.bottomNavigation) {
-						NavigationBarItem(
-							selected = currentBackStack?.destination?.route == destination.route,
-							alwaysShowLabel = false,
-							onClick = {
-								navigateTo(destination) {
-									popUpTo(Destinations.Main.home.route) {
-										saveState = true
-									}
-
-									launchSingleTop = true
-									restoreState = true
-								}
-							},
-							label = {
-								Text(stringResource(id = destination.title!!))
-							},
-							icon = {
-								Icon(
-									painter = painterResource(id = destination.icon!!),
-									contentDescription = null
-								)
-							}
-						)
-					}
-				}
-			}
-		}
+		containerColor = PPATheme.colorScheme.background,
+		contentWindowInsets = WindowInsets.Zero
 	) { scaffoldPadding ->
 		ModalBottomSheetLayout(
 			bottomSheetNavigator = bottomSheetNavigator,
@@ -121,100 +101,158 @@ fun PlanetPulseAcademy(
 			sheetShape = MaterialTheme.shapes.large
 		) {
 			if (state.userCredential != null && state.userPreference != null) {
-				NavHost(
-					navController = navController,
-					startDestination = when {
-						state.userPreference!!.isFirstInstall -> Destinations.Onboarding.route.route
-						!state.userCredential!!.isLoggedIn -> Destinations.Auth.route.route
-						else -> Destinations.Main.route.route
-					},
+				Box(
 					modifier = Modifier
-						.padding(scaffoldPadding)
+						.fillMaxSize()
 				) {
-					navigation(
-						startDestination = Destinations.Onboarding.onboarding.route,
-						route = Destinations.Onboarding.route.route
+					CompositionLocalProvider(
+						LocalBottomBarPadding provides if (showBottomNavigation) 80.dp else 0.dp
 					) {
-						composable(Destinations.Onboarding.onboarding.route) { backEntry ->
-							OnboardingScreen(
-								viewModel = hiltViewModel(backEntry),
-								navigateTo = navigateTo
-							)
+						NavHost(
+							navController = navController,
+							startDestination = when {
+								state.userPreference!!.isFirstInstall -> Destinations.Onboarding.route.route
+								!state.userCredential!!.isLoggedIn -> Destinations.Auth.route.route
+								else -> Destinations.Main.route.route
+							},
+							modifier = Modifier
+								.padding(scaffoldPadding)
+						) {
+							navigation(
+								startDestination = Destinations.Onboarding.onboarding.route,
+								route = Destinations.Onboarding.route.route
+							) {
+								composable(Destinations.Onboarding.onboarding.route) { backEntry ->
+									OnboardingScreen(
+										viewModel = hiltViewModel(backEntry),
+										navigateTo = navigateTo
+									)
+								}
+							}
+
+							navigation(
+								startDestination = Destinations.Auth.login.route,
+								route = Destinations.Auth.route.route
+							) {
+								composable(Destinations.Auth.register.route) { backEntry ->
+									RegisterScreen(
+										viewModel = hiltViewModel(backEntry),
+										onNavigateUp = navController::popBackStack
+									)
+								}
+
+								composable(Destinations.Auth.login.route) { backEntry ->
+									LoginScreen(
+										viewModel = hiltViewModel(backEntry),
+										navigateTo = navigateTo
+									)
+								}
+
+								composable(Destinations.Auth.forgotPassword.route) { backEntry ->
+									ForgotPasswordScreen(
+										viewModel = hiltViewModel(backEntry),
+										onNavigateUp = navController::popBackStack
+									)
+								}
+							}
+
+							navigation(
+								startDestination = Destinations.Main.home.route,
+								route = Destinations.Main.route.route
+							) {
+								composable(Destinations.Main.home.route) { backEntry ->
+									HomeScreen(
+										viewModel = hiltViewModel(backEntry),
+										navigateTo = navigateTo
+									)
+								}
+
+								composable(Destinations.Main.academy.route) { backEntry ->
+									AcademyScreen(
+										viewModel = hiltViewModel(backEntry),
+										onNavigateUp = navController::popBackStack
+									)
+								}
+
+								composable(Destinations.Main.profile.route) { backEntry ->
+									ProfileScreen(
+										viewModel = hiltViewModel(backEntry),
+										onNavigateUp = navController::popBackStack
+									)
+								}
+
+								composable(Destinations.Main.lesson.route) { backEntry ->
+									LessonScreen(
+										viewModel = hiltViewModel(backEntry),
+										onNavigateUp = navController::popBackStack,
+										navigateTo = navigateTo
+									)
+								}
+
+								composable(Destinations.Main.quiz.route) { backEntry ->
+									QuizScreen(
+										viewModel = hiltViewModel(backEntry),
+										onNavigateUp = navController::popBackStack,
+									)
+								}
+							}
 						}
 					}
 
-					navigation(
-						startDestination = Destinations.Auth.login.route,
-						route = Destinations.Auth.route.route
-					) {
-						composable(Destinations.Auth.register.route) { backEntry ->
-							RegisterScreen(
-								viewModel = hiltViewModel(backEntry),
-								onNavigateUp = navController::popBackStack
-							)
-						}
-
-						composable(Destinations.Auth.login.route) { backEntry ->
-							LoginScreen(
-								viewModel = hiltViewModel(backEntry),
-								navigateTo = navigateTo
-							)
-						}
-
-						composable(Destinations.Auth.forgotPassword.route) { backEntry ->
-							ForgotPasswordScreen(
-								viewModel = hiltViewModel(backEntry),
-								onNavigateUp = navController::popBackStack
-							)
-						}
-					}
-
-					navigation(
-						startDestination = Destinations.Main.home.route,
-						route = Destinations.Main.route.route
-					) {
-						composable(Destinations.Main.home.route) { backEntry ->
-							HomeScreen(
-								viewModel = hiltViewModel(backEntry),
-								navigateTo = navigateTo
-							)
-						}
-
-						composable(Destinations.Main.academy.route) { backEntry ->
-							AcademyScreen(
-								viewModel = hiltViewModel(backEntry),
-								onNavigateUp = navController::popBackStack
-							)
-						}
-
-						composable(Destinations.Main.profile.route) { backEntry ->
-							ProfileScreen(
-								viewModel = hiltViewModel(backEntry),
-								onNavigateUp = navController::popBackStack
-							)
-						}
-
-						composable(Destinations.Main.lesson.route) { backEntry ->
-							LessonScreen(
-								viewModel = hiltViewModel(backEntry),
-								onNavigateUp = navController::popBackStack,
-								navigateTo = navigateTo
-							)
-						}
-
-						composable(Destinations.Main.quiz.route) { backEntry ->
-							QuizScreen(
-								viewModel = hiltViewModel(backEntry),
-								onNavigateUp = navController::popBackStack,
-							)
-						}
-					}
+					BottomBar(
+						show = showBottomNavigation,
+						currentRoute = currentBackStack?.destination?.route,
+						navigateTo = navigateTo,
+						modifier = Modifier
+							.align(Alignment.BottomCenter)
+					)
 				}
 			}
 		}
 	}
+}
 
+@Composable
+private fun BottomBar(
+	show: Boolean,
+	currentRoute: String?,
+	modifier: Modifier = Modifier,
+	navigateTo: (Destination, builder: (NavOptionsBuilder.() -> Unit)?) -> Unit
+) {
+	AnimatedVisibility(
+		visible = show,
+		enter = slideInVertically { it },
+		exit = slideOutVertically { it },
+		modifier = modifier
+	) {
+		NavigationBar {
+			for (destination in Destinations.bottomNavigation) {
+				NavigationBarItem(
+					selected = currentRoute == destination.route,
+					alwaysShowLabel = false,
+					onClick = {
+						navigateTo(destination) {
+							popUpTo(Destinations.Main.home.route) {
+								saveState = true
+							}
 
+							launchSingleTop = true
+							restoreState = true
+						}
+					},
+					label = {
+						Text(stringResource(id = destination.title!!))
+					},
+					icon = {
+						Icon(
+							painter = painterResource(id = destination.icon!!),
+							contentDescription = null
+						)
+					}
+				)
+			}
+		}
+	}
 }
 
 private fun navigateTo(navController: NavController, dest: Destination, inclusive: Boolean = false) {

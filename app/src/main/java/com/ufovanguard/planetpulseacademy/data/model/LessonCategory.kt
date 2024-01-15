@@ -9,7 +9,7 @@ import kotlinx.parcelize.Parcelize
 // TODO: Create category table, and use database relation
 @Parcelize
 @Immutable
-data class Category(
+data class LessonCategory(
     @SerializedName("description")
     val description: String,
     @SerializedName("_id")

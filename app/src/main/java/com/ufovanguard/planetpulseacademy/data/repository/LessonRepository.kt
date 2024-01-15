@@ -2,6 +2,7 @@ package com.ufovanguard.planetpulseacademy.data.repository
 
 import com.ufovanguard.planetpulseacademy.data.model.Lesson
 import com.ufovanguard.planetpulseacademy.data.model.remote.response.LessonResponse
+import kotlinx.coroutines.flow.Flow
 import retrofit2.Response
 
 interface LessonRepository {
@@ -14,6 +15,10 @@ interface LessonRepository {
 		token: String,
 		id: String
 	): Response<LessonResponse>
+
+	fun getAllLocalLesson(): Flow<List<Lesson>>
+
+	fun getLocalLessonById(id: String): Flow<Lesson?>
 
 	suspend fun insertLocalLesson(vararg lesson: Lesson)
 

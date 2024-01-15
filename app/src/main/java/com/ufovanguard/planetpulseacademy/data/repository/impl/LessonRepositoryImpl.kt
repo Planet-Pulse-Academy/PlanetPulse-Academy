@@ -5,6 +5,7 @@ import com.ufovanguard.planetpulseacademy.data.datasource.remote.LessonService
 import com.ufovanguard.planetpulseacademy.data.model.Lesson
 import com.ufovanguard.planetpulseacademy.data.model.remote.response.LessonResponse
 import com.ufovanguard.planetpulseacademy.data.repository.LessonRepository
+import kotlinx.coroutines.flow.Flow
 import retrofit2.Response
 import javax.inject.Inject
 
@@ -19,6 +20,14 @@ class LessonRepositoryImpl @Inject constructor(
 
 	override suspend fun getLesson(token: String, id: String): Response<LessonResponse> {
 		return lessonService.getLesson(token, id)
+	}
+
+	override fun getAllLocalLesson(): Flow<List<Lesson>> {
+		return lessonDao.getAll()
+	}
+
+	override fun getLocalLessonById(id: String): Flow<Lesson?> {
+		return lessonDao.getById(id)
 	}
 
 	override suspend fun insertLocalLesson(vararg lesson: Lesson) {

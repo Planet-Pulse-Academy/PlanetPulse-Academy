@@ -22,7 +22,6 @@ import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -41,6 +40,7 @@ import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ufovanguard.planetpulseacademy.R
 import com.ufovanguard.planetpulseacademy.foundation.base.ui.BaseScreenWrapper
+import com.ufovanguard.planetpulseacademy.foundation.common.LocalBottomBarPadding
 import com.ufovanguard.planetpulseacademy.foundation.extension.Zero
 import com.ufovanguard.planetpulseacademy.foundation.theme.PPATheme
 import com.ufovanguard.planetpulseacademy.foundation.theme.PlanetPulseAcademyTheme
@@ -86,7 +86,7 @@ fun AcademyScreen(
 	}
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun AcademyScreenContent(
 	state: AcademyState,
@@ -215,7 +215,10 @@ private fun AcademyScreenContent(
 			}
 
 			item {
-				Spacer(modifier = Modifier.height(16.dp))
+				Spacer(
+					modifier = Modifier
+						.height(16.dp + LocalBottomBarPadding.current)
+				)
 			}
 		}
 	}

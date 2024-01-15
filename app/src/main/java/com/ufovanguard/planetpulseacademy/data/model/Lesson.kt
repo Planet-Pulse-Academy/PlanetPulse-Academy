@@ -13,40 +13,40 @@ import kotlinx.parcelize.Parcelize
 @Immutable
 @Entity(tableName = "lesson")
 data class Lesson(
-    @SerializedName("categories")
+	@SerializedName("categories")
 	@ColumnInfo(name = "categories")
-    val categories: List<Category>,
+    val categories: List<LessonCategory>,
 
-    @SerializedName("createdAt")
+	@SerializedName("createdAt")
 	@ColumnInfo(name = "createdAt")
     val createdAt: String,
 
-    @SerializedName("description")
+	@SerializedName("description")
 	@ColumnInfo(name = "description")
     val description: String,
 
-    @SerializedName("_id")
+	@SerializedName("_id")
 	@ColumnInfo(name = "_id")
 	@PrimaryKey
     val id: String,
 
-    @SerializedName("photo_url")
+	@SerializedName("photo_url")
 	@ColumnInfo(name = "photo_url")
     val photoUrl: String,
 
-    @SerializedName("stages")
+	@SerializedName("stages")
 	@ColumnInfo(name = "stages")
     val stages: List<Stage>,
 
-    @SerializedName("title")
+	@SerializedName("title")
 	@ColumnInfo(name = "title")
     val title: String,
 
-    @SerializedName("updatedAt")
+	@SerializedName("updatedAt")
 	@ColumnInfo(name = "updatedAt")
     val updatedAt: String,
 
-    @SerializedName("__v")
+	@SerializedName("__v")
 	@ColumnInfo(name = "__v")
     val v: Int
 ): Parcelable
