@@ -26,15 +26,21 @@ import androidx.credentials.exceptions.CreateCredentialException
 import androidx.credentials.exceptions.GetCredentialCancellationException
 import androidx.credentials.exceptions.GetCredentialException
 import androidx.credentials.exceptions.NoCredentialException
+import androidx.work.WorkManager
 import com.ufovanguard.planetpulseacademy.foundation.theme.PPATheme
 import com.ufovanguard.planetpulseacademy.foundation.theme.PlanetPulseAcademyTheme
+import com.ufovanguard.planetpulseacademy.foundation.worker.Workers
 import com.ufovanguard.planetpulseacademy.ui.app.PlanetPulseAcademy
 import com.ufovanguard.planetpulseacademy.ui.app.PlanetPulseAcademyViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity: ComponentActivity() {
+
+	@Inject
+	lateinit var workManager: WorkManager
 
 	private val viewModel: PlanetPulseAcademyViewModel by viewModels()
 
@@ -136,4 +142,15 @@ class MainActivity: ComponentActivity() {
 		return null
 	}
 
+	override fun onStart() {
+		super.onStart()
+
+		// Refresh data every onStart
+		viewModel.state.value.userCredential?.let { cred ->
+			workManager
+				.beginWith(Workers.getAllLesson(cred.getBearerToken()))
+				.then(Workers.getAcademy(cred.getBearerToken()))
+				.enqueue()
+		}
+	}
 }
